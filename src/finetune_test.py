@@ -7,7 +7,7 @@ from sklearn.metrics import classification_report, accuracy_score
 # Configuration
 MODEL_NAME = "Salesforce/codet5p-220m"
 OUTPUT_DIR = "results"
-MAX_LENGTH = 2128
+MAX_LENGTH = 700
 EPOCHS = 3
 BATCH_SIZE = 1
 
@@ -51,7 +51,11 @@ class CodeCloneDataset(Dataset):
         )["input_ids"]
 
         enc["labels"] = labels
-        return enc 
+        return {
+            "input_ids": enc["input_ids"].squeeze(),  # [seq_len]
+            "attention_mask": enc["attention_mask"].squeeze(),  # [seq_len]
+            "labels": labels.squeeze()  # [seq_len]
+        }
 
 
 
@@ -81,7 +85,7 @@ data_collator = DataCollatorForSeq2Seq(
     tokenizer=tokenizer,
     model=model,  # optional but helpful
     padding=True,  # dynamic padding
-    return_tensors="pt"
+    return_tensors="pt",
 )
 
 # Training arguments
@@ -90,7 +94,6 @@ training_args = Seq2SeqTrainingArguments(
     eval_strategy="epoch",
     save_strategy="epoch",
     learning_rate=5e-5,
-    data_collator=data_collator,
     per_device_train_batch_size=BATCH_SIZE,
     per_device_eval_batch_size=BATCH_SIZE,
     num_train_epochs=EPOCHS,
@@ -111,6 +114,7 @@ trainer = Seq2SeqTrainer(
     train_dataset=train_dataset,
     eval_dataset=val_dataset,
     tokenizer=tokenizer,
+    data_collator=data_collator
 )
 
 # Train

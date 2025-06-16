@@ -129,7 +129,7 @@ def print_clone_stats(train, test, label):
     print(f"  Test non-clones:  {sum(test['label'] == 0)}")
 
 def main():
-    max_chars = 1000  # Filter snippet pairs where both are under 1000 chars
+    max_chars = 300  # Filter snippet pairs where both are under 1000 chars
 
     train, test = generate_clone_dataset(df, 'Java', 'Fortran', test_size=0.3, max_chars=max_chars)
     print_clone_stats(train, test, "Java-Fortran")
