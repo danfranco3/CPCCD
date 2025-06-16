@@ -2,11 +2,12 @@ import json
 import torch
 from torch.utils.data import Dataset, DataLoader, random_split
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, Seq2SeqTrainer, Seq2SeqTrainingArguments
+from sklearn.metrics import classification_report, accuracy_score
 
 # Configuration
 MODEL_NAME = "Salesforce/codet5p-220m"
 OUTPUT_DIR = "results"
-MAX_LENGTH = 2048
+MAX_LENGTH = 4096
 EPOCHS = 3
 BATCH_SIZE = 1
 
@@ -128,9 +129,38 @@ def predict_few_shot(example_pairs, target_pair):
     outputs = model.generate(**inputs, max_new_tokens=10)
     return tokenizer.decode(outputs[0], skip_special_tokens=True).strip()
 
+def evaluate_model(model, tokenizer, test_loader, max_new_tokens=10):
+    model.eval()
+    preds = []
+    targets = []
 
-# Example usage
-example_code1 = "var mac = \"88:53:2E:67:07:BE\";\nfunction findmac(){\n\twindow.open(\"http://api.macvendors.com/\" + mac);\n}\nfindmac();"
-example_code2 = "program rosettaCodeSHA256;\nuses\n  SysUtils, DCPsha256;\nvar\n  ros: String;\n  sha256 : TDCP_sha256;\n  digest : array[0..63] of byte;\n  i: Integer;\n  output: String;\nbegin\n  ros := 'Rosetta code';\n  sha256 := TDCP_sha256.Create(nil);\n  sha256.init;\n  sha256.UpdateStr(ros);\n  sha256.Final(digest);\n  output := '';\n  for i := 0 to 31 do begin\n    output := output + intToHex(digest[i], 2);\n  end;\n  writeln(lowerCase(output));\nend."
-example_prompt = f"Are the following two code snippets functionally equivalent?\n\nCode1:\n{example_code1}\n\nCode2:\n{example_code2}\n\nAnswer:"
-print("Model prediction:", predict_few_shot([test_dataset[0], test_dataset[1]], example_prompt))
+    with torch.no_grad():
+        for batch in test_loader:
+            input_ids = batch["input_ids"].unsqueeze(0).to(device)  # shape: (1, seq_len)
+            attention_mask = batch["attention_mask"].unsqueeze(0).to(device)
+            labels = batch["labels"].to(device)
+
+            # Generate prediction
+            generated_ids = model.generate(
+                input_ids=input_ids,
+                attention_mask=attention_mask,
+                max_new_tokens=max_new_tokens
+            )
+
+            pred = tokenizer.decode(generated_ids[0], skip_special_tokens=True).strip().lower()
+            true = tokenizer.decode(labels[0], skip_special_tokens=True).strip().lower()
+
+            # Normalize to 'yes'/'no'
+            pred_label = 1 if 'yes' in pred else 0
+            true_label = 1 if 'yes' in true else 0
+
+            preds.append(pred_label)
+            targets.append(true_label)
+
+    # Report
+    print("\nEvaluation Results:")
+    print(classification_report(targets, preds, target_names=["Non-clone", "Clone"]))
+    print(f"Accuracy: {accuracy_score(targets, preds):.4f}")
+
+evaluate_model(model, tokenizer, test_loader)
+
