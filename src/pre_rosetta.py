@@ -91,6 +91,10 @@ def save_dataset(train_data, test_data, prefix='tasksplit_clones'):
     train_json = train_data[['code1', 'code2', 'label']].to_dict(orient='records')
     test_json = test_data[['code1', 'code2', 'label']].to_dict(orient='records')
     data_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    if not os.path.exists(os.path.join(data_dir, 'data')):
+        os.makedirs(os.path.join(data_dir, 'data'))
+    
     with open(os.path.join(data_dir, f'data/{prefix}_train.json'), 'w') as f:
         json.dump(train_json, f, indent=2)
     with open(os.path.join(data_dir, f'data/{prefix}_test.json'), 'w') as f:
