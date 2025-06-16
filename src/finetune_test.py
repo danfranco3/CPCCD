@@ -1,19 +1,18 @@
 import json
 import torch
 from torch.utils.data import Dataset, DataLoader, random_split
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, Seq2SeqTrainer, Seq2SeqTrainingArguments
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, Seq2SeqTrainer, Seq2SeqTrainingArguments, DataCollatorForSeq2Seq
 from sklearn.metrics import classification_report, accuracy_score
 
 # Configuration
 MODEL_NAME = "Salesforce/codet5p-220m"
 OUTPUT_DIR = "results"
-MAX_LENGTH = 4096
+MAX_LENGTH = 2128
 EPOCHS = 3
 BATCH_SIZE = 1
 
-device = torch.device("cuda")
-torch.cuda.is_available = lambda: True  # Override to disable fp16 logic in Hugging Face
-use_fp16 = True  # Make sure fp16 is disabled
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+use_fp16 = torch.cuda.is_available()  # Enable fp16 only if CUDA is available
 
 # Dataset definition
 class CodeCloneDataset(Dataset):
@@ -52,12 +51,16 @@ class CodeCloneDataset(Dataset):
         )["input_ids"]
 
         enc["labels"] = labels
-        return {k: v.squeeze(0) for k, v in enc.items()}
+        return enc 
+
 
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
 model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME, trust_remote_code=True)
 model.to(device)
+
+if torch.cuda.is_available():
+    model.gradient_checkpointing_enable()
 
 # Load datasets
 code_set = 'python_cobol_clones'
@@ -74,21 +77,30 @@ train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE)
 test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE)
 
+data_collator = DataCollatorForSeq2Seq(
+    tokenizer=tokenizer,
+    model=model,  # optional but helpful
+    padding=True,  # dynamic padding
+    return_tensors="pt"
+)
+
 # Training arguments
 training_args = Seq2SeqTrainingArguments(
     output_dir=OUTPUT_DIR,
     eval_strategy="epoch",
     save_strategy="epoch",
     learning_rate=5e-5,
+    data_collator=data_collator,
     per_device_train_batch_size=BATCH_SIZE,
     per_device_eval_batch_size=BATCH_SIZE,
     num_train_epochs=EPOCHS,
     weight_decay=0.01,
+    eval_accumulation_steps=4,
     predict_with_generate=True,
     logging_dir="logs",
     load_best_model_at_end=True,
-    fp16=use_fp16,  # ensure fp16 is disabled
-    no_cuda=True,   # force CPU usage
+    fp16=use_fp16,
+    no_cuda=not torch.cuda.is_available(),
 )
 
 
