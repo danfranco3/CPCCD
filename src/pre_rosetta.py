@@ -121,16 +121,26 @@ def save_tokenizer_dataset(code_snippets, filename='cobol_fortran_pascal_code.js
     print(f"Saved tokenizer training dataset: {path}")
 
 
+def print_clone_stats(train, test, label):
+    print(f"\nStats for {label}:")
+    print(f"  Train clones:     {sum(train['label'] == 1)}")
+    print(f"  Train non-clones: {sum(train['label'] == 0)}")
+    print(f"  Test clones:      {sum(test['label'] == 1)}")
+    print(f"  Test non-clones:  {sum(test['label'] == 0)}")
+
 def main():
     max_chars = 1000  # Filter snippet pairs where both are under 1000 chars
 
     train, test = generate_clone_dataset(df, 'Java', 'Fortran', test_size=0.3, max_chars=max_chars)
+    print_clone_stats(train, test, "Java-Fortran")
     save_dataset(train, test, prefix='java_fortran_clones')
 
     train, test = generate_clone_dataset(df, 'Python', 'COBOL', test_size=0.3, max_chars=max_chars)
+    print_clone_stats(train, test, "Python-COBOL")
     save_dataset(train, test, prefix='python_cobol_clones')
 
     train, test = generate_clone_dataset(df, 'JavaScript', 'Free Pascal', test_size=0.3, max_chars=max_chars)
+    print_clone_stats(train, test, "JavaScript-Pascal")
     save_dataset(train, test, prefix='js_pascal_clones')
 
     code_snippets = extract_cobol_fortran_pascal(df)
