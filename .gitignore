@@ -1,1 +1,6 @@
 .venv
+src/data/
+tokenizer_ckpt
+training_output
+bpe_cobol_fortran
+codebert-clone
