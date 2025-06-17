@@ -152,9 +152,10 @@ def evaluate_model(model, tokenizer, test_loader, max_new_tokens=10):
 
     with torch.no_grad():
         for batch in test_loader:
-            input_ids = batch["input_ids"].unsqueeze(0).to(device)  # shape: (1, seq_len)
-            attention_mask = batch["attention_mask"].unsqueeze(0).to(device)
+            input_ids = batch["input_ids"].to(device)          # No unsqueeze
+            attention_mask = batch["attention_mask"].to(device)
             labels = batch["labels"].to(device)
+
 
             # Generate prediction
             generated_ids = model.generate(
