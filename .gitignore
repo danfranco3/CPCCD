@@ -1,5 +1,7 @@
 .venv
-src/data/
+src/data/codeNet
+src/data/rosetta
+src/data/combined_train.json
 tokenizer_ckpt
 training_output
 bpe_cobol_fortran
