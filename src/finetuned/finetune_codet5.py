@@ -79,30 +79,31 @@ def eval_two_shot(code_set, support_dataset, test_examples, model, tokenizer):
     preds = []
     outputs = []  # to save detailed info for later
 
-    for i, ex in enumerate(test_examples):
-        # Sample few-shot support as you do
-        few_shot_support = (
-            sample_few_shot_examples(support_dataset, n=1, label=1, seed=i) +
-            sample_few_shot_examples(support_dataset, n=1, label=0, seed=i + 100)
-        )
+    with torch.no_grad():
+        for i, ex in enumerate(test_examples):
+            # Sample few-shot support as you do
+            few_shot_support = (
+                sample_few_shot_examples(support_dataset, n=1, label=1, seed=i) +
+                sample_few_shot_examples(support_dataset, n=1, label=0, seed=i + 100)
+            )
 
-        prompt = few_shot_prompt(few_shot_support, ex)
+            prompt = few_shot_prompt(few_shot_support, ex)
 
-        output_text = predict(prompt, model, tokenizer)
+            output_text = predict(prompt, model, tokenizer)
 
-        pred_label = 1 if 'yes' in output_text.strip().lower() else 0
+            pred_label = 1 if 'yes' in output_text.strip().lower() else 0
 
-        targets.append(ex["label"])
-        preds.append(pred_label)
+            targets.append(ex["label"])
+            preds.append(pred_label)
 
-        outputs.append({
-            "input": prompt,
-            "prediction": output_text,
-            "pred_label": pred_label,
-            "true_label": ex["label"],
-            "code1": ex.get("code1"),
-            "code2": ex.get("code2"),
-        })
+            outputs.append({
+                "input": prompt,
+                "prediction": output_text,
+                "pred_label": pred_label,
+                "true_label": ex["label"],
+                "code1": ex.get("code1"),
+                "code2": ex.get("code2"),
+            })
 
     # After all examples, print metrics
     print("\nEvaluation Results for Few-Shot:")
@@ -121,37 +122,38 @@ def eval_one_shot(code_set, support_dataset, test_examples, model, tokenizer, ne
     preds = []
     outputs = []  # to save detailed info for later
 
-    for i, ex in enumerate(test_examples):
-        if neg:
-            few_shot_support = sample_few_shot_examples(support_dataset, n=1, label=0, seed=i + 100)
-        else:
-            few_shot_support = sample_few_shot_examples(support_dataset, n=1, label=1, seed=i)
+    with torch.no_grad():
+        for i, ex in enumerate(test_examples):
+            if neg:
+                few_shot_support = sample_few_shot_examples(support_dataset, n=1, label=0, seed=i + 100)
+            else:
+                few_shot_support = sample_few_shot_examples(support_dataset, n=1, label=1, seed=i)
 
-        prompt = few_shot_prompt(few_shot_support, ex)
+            prompt = few_shot_prompt(few_shot_support, ex)
 
-        output_text = predict(prompt, model, tokenizer)
+            output_text = predict(prompt, model, tokenizer)
 
-        pred_label = 1 if 'yes' in output_text.strip().lower() else 0
+            pred_label = 1 if 'yes' in output_text.strip().lower() else 0
 
-        targets.append(ex["label"])
-        preds.append(pred_label)
+            targets.append(ex["label"])
+            preds.append(pred_label)
 
-        outputs.append({
-            "input": prompt,
-            "prediction": output_text,
-            "pred_label": pred_label,
-            "true_label": ex["label"],
-            "code1": ex.get("code1"),
-            "code2": ex.get("code2"),
-        })
+            outputs.append({
+                "input": prompt,
+                "prediction": output_text,
+                "pred_label": pred_label,
+                "true_label": ex["label"],
+                "code1": ex.get("code1"),
+                "code2": ex.get("code2"),
+            })
 
     # After all examples, print metrics
-    print(f"\nEvaluation Results for {"Negative" if neg else "Positive"} One-Shot:")
+    print(f"\nEvaluation Results for {'Negative' if neg else 'Positive'} One-Shot:")
     print(classification_report(targets, preds, target_names=["Non-clone", "Clone"]))
     print(f"Accuracy: {accuracy_score(targets, preds):.4f}")
 
     # Save detailed results to JSON file
-    output_path = f"{OUTPUT_DIR}/codet5/{code_set}_{"neg" if neg else "pos"}_one_shot.json"
+    output_path = f"{OUTPUT_DIR}/codet5/{code_set}_{'neg' if neg else 'pos'}_one_shot.json"
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, "w") as f:
         json.dump(outputs, f, indent=2)
