@@ -148,8 +148,9 @@ def run_evaluation():
         with open(test_path) as f:
             test_examples = json.load(f)
 
-        model_path = f"{OUTPUT_DIR}/{code_set}/codet5"
-        model = AutoModelForSeq2SeqLM.from_pretrained(model_path, trust_remote_code=True).to(device)
+        model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME, trust_remote_code=True).to(device)
+        if torch.cuda.is_available():
+            model.gradient_checkpointing_enable()
 
         tokenizer, model = extend_tokenizer_and_resize_model(
             model,
