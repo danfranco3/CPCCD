@@ -1,76 +1,30 @@
-# eval_only.py
-
 import json
 import torch
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 from sklearn.metrics import classification_report, accuracy_score
 import os
+from code_clone_pkg.data_utils import sample_few_shot_examples, load_multiple_datasets
+from code_clone_pkg.dataset import CodeCloneDataset
+from code_clone_pkg.prompts import few_shot_prompt
+from code_clone_pkg.utils import extend_tokenizer_and_resize_model
 
+# Configuration
 MODEL_NAME = "Salesforce/codet5p-220m"
+OUTPUT_DIR = "results"
+MAX_LENGTH = 1400
 CLONE_DATASETS = [
     'python_cobol',
     'java_fortran',
     'js_pascal'
 ]
-MAX_LENGTH = 2800
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-class CodeCloneDataset(Dataset):
-    def __init__(self, path, tokenizer, max_length=MAX_LENGTH):
-        with open(path) as f:
-            raw_data = json.load(f)
-        self.data = [
-            {
-                "input": f"Are the following two code snippets functionally equivalent?\n\nCode1:\n{ex['code1']}\n\nCode2:\n{ex['code2']}\n\nAnswer:",
-                "output": "Yes" if ex["label"] == 1 else "No"
-            } for ex in raw_data
-        ]
-        self.tokenizer = tokenizer
-        self.max_length = max_length
-
-    def __len__(self):
-        return len(self.data)
-
-    def __getitem__(self, idx):
-        sample = self.data[idx]
-        enc = self.tokenizer(
-            sample["input"],
-            max_length=self.max_length,
-            truncation=True,
-            padding="max_length",
-            return_tensors="pt"
-        )
-        labels = self.tokenizer(
-            sample["output"],
-            max_length=10,
-            padding="max_length",
-            truncation=True,
-            return_tensors="pt"
-        )["input_ids"]
-        enc["labels"] = labels
-        return {
-            "input_ids": enc["input_ids"].squeeze(),
-            "attention_mask": enc["attention_mask"].squeeze(),
-            "labels": labels.squeeze()
-        }
-
-def few_shot_prompt(example_pairs, target_pair):
-    prompt = "Are the following code snippet pairs functionally equivalent?\n\n"
-    for ex in example_pairs:
-        label = "Yes" if ex["label"] == 1 else "No"
-        prompt += f"Code1:\n{ex['code1']}\n\nCode2:\n{ex['code2']}\n\nAnswer: {label}\n\n"
-    prompt += f"Code1:\n{target_pair['code1']}\n\nCode2:\n{target_pair['code2']}\n\nAnswer:"
-    return prompt
-
 def predict(prompt, model, tokenizer):
-    inputs = tokenizer(prompt, return_tensors="pt", truncation=True, padding=True, max_length=MAX_LENGTH).to(device)
+    inputs = tokenizer(prompt, return_tensors="pt", truncation=True, padding=True, max_length=MAX_LENGTH).to(model.device)
     outputs = model.generate(**inputs, max_new_tokens=10)
     return tokenizer.decode(outputs[0], skip_special_tokens=True).strip()
-
-def predict_few_shot(example_pairs, target_pair, model, tokenizer):
-    prompt = few_shot_prompt(example_pairs, target_pair)
-    return predict(prompt, model, tokenizer)
 
 def evaluate_model(model, tokenizer, test_data, raw_examples, output_path):
     model.eval()
@@ -85,6 +39,7 @@ def evaluate_model(model, tokenizer, test_data, raw_examples, output_path):
             input_ids = batch["input_ids"].to(device)
             attention_mask = batch["attention_mask"].to(device)
             labels = batch["labels"].to(device)
+
             generated_ids = model.generate(input_ids=input_ids, attention_mask=attention_mask, max_new_tokens=10)
 
             pred = tokenizer.decode(generated_ids[0], skip_special_tokens=True).strip().lower()
@@ -96,7 +51,6 @@ def evaluate_model(model, tokenizer, test_data, raw_examples, output_path):
             preds.append(pred_label)
             targets.append(true_label)
 
-            # Save detailed output
             outputs.append({
                 "code1": raw_examples[i]["code1"],
                 "code2": raw_examples[i]["code2"],
@@ -105,43 +59,117 @@ def evaluate_model(model, tokenizer, test_data, raw_examples, output_path):
                 "true_label": true_label
             })
 
-    print("\nEvaluation Results:")
+    print("\nZero-Shot Evaluation:")
     print(classification_report(targets, preds, target_names=["Non-clone", "Clone"]))
     print(f"Accuracy: {accuracy_score(targets, preds):.4f}")
 
-    # Save JSON output
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, "w") as f:
         json.dump(outputs, f, indent=2)
-    print(f"Results saved to {output_path}")
+    print(f"Saved to {output_path}")
 
+def eval_one_shot(code_set, support_dataset, test_examples, model, tokenizer, neg=False):
+    targets, preds, outputs = [], [], []
 
-def run():
+    with torch.no_grad():
+        for i, ex in enumerate(test_examples):
+            few_shot_support = sample_few_shot_examples(
+                support_dataset, n=1, label=0 if neg else 1, seed=i + (100 if neg else 0)
+            )
+            prompt = few_shot_prompt(few_shot_support, ex)
+            output_text = predict(prompt, model, tokenizer)
+            pred_label = 1 if 'yes' in output_text.strip().lower() else 0
+
+            targets.append(ex["label"])
+            preds.append(pred_label)
+            outputs.append({
+                "input": prompt,
+                "prediction": output_text,
+                "pred_label": pred_label,
+                "true_label": ex["label"],
+                "code1": ex.get("code1"),
+                "code2": ex.get("code2"),
+            })
+
+    mode = 'Negative' if neg else 'Positive'
+    print(f"\n{mode} One-Shot Evaluation:")
+    print(classification_report(targets, preds, target_names=["Non-clone", "Clone"]))
+    print(f"Accuracy: {accuracy_score(targets, preds):.4f}")
+
+    suffix = "neg" if neg else "pos"
+    output_path = f"{OUTPUT_DIR}/codet5/{code_set}_{suffix}_one_shot.json"
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, "w") as f:
+        json.dump(outputs, f, indent=2)
+    print(f"Saved to {output_path}")
+
+def eval_two_shot(code_set, support_dataset, test_examples, model, tokenizer):
+    targets, preds, outputs = [], [], []
+
+    with torch.no_grad():
+        for i, ex in enumerate(test_examples):
+            few_shot_support = (
+                sample_few_shot_examples(support_dataset, n=1, label=1, seed=i) +
+                sample_few_shot_examples(support_dataset, n=1, label=0, seed=i + 100)
+            )
+            prompt = few_shot_prompt(few_shot_support, ex)
+            output_text = predict(prompt, model, tokenizer)
+            pred_label = 1 if 'yes' in output_text.strip().lower() else 0
+
+            targets.append(ex["label"])
+            preds.append(pred_label)
+            outputs.append({
+                "input": prompt,
+                "prediction": output_text,
+                "pred_label": pred_label,
+                "true_label": ex["label"],
+                "code1": ex.get("code1"),
+                "code2": ex.get("code2"),
+            })
+
+    print("\nTwo-Shot Evaluation:")
+    print(classification_report(targets, preds, target_names=["Non-clone", "Clone"]))
+    print(f"Accuracy: {accuracy_score(targets, preds):.4f}")
+
+    output_path = f"{OUTPUT_DIR}/codet5/{code_set}_few_shot.json"
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, "w") as f:
+        json.dump(outputs, f, indent=2)
+    print(f"Saved to {output_path}")
+
+def run_evaluation():
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
-    model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME, trust_remote_code=True).to(device)
-    os.makedirs("results", exist_ok=True)
-    os.makedirs("results/codet5", exist_ok=True)
-    
+
     for code_set in CLONE_DATASETS:
-        print(f"\n=== Evaluating dataset: {code_set} ===")
-        test_path = f"src/data/{code_set}_test.json"
-        output_path = f"results/codet5/{code_set}_eval_output.json"
+        print(f"\n=== Evaluating on dataset: {code_set} ===")
+        test_path = f"src/data/rosetta/{code_set}_test.json"
+        test_dataset = CodeCloneDataset(test_path, tokenizer, MAX_LENGTH)
 
         with open(test_path) as f:
             test_examples = json.load(f)
 
-        test_dataset = CodeCloneDataset(test_path, tokenizer)
+        model_path = f"{OUTPUT_DIR}/{code_set}/codet5"
+        model = AutoModelForSeq2SeqLM.from_pretrained(model_path, trust_remote_code=True).to(device)
 
-        # Run evaluation and save detailed outputs
-        evaluate_model(model, tokenizer, test_dataset, test_examples, output_path)
+        tokenizer, model = extend_tokenizer_and_resize_model(
+            model,
+            tokenizer,
+            custom_tokenizer_path="bpe_cobol_fortran_pascal.json"
+        )
 
-        # Optional: one-shot and few-shot demo
-        print("\nOne-shot and Few-shot:")
-        for i, ex in enumerate(test_examples[:3]):
-            one_shot = predict(few_shot_prompt([], ex), model, tokenizer)
-            few_shot = predict_few_shot(test_examples[:2], ex, model, tokenizer)
-            print(f"One-shot [{i}]: {one_shot}")
-            print(f"Few-shot [{i}]: {few_shot}")
+        evaluate_model(model, tokenizer, test_dataset, test_examples,
+                       output_path=f"{OUTPUT_DIR}/codet5/{code_set}_zero_shot.json")
 
+        paths = [
+            "data/codeNet/python_cobol_test.json",
+            "data/codeNet/java_fortran_test.json",
+            "data/codeNet/js_pascal_test.json"
+        ]
+        support_dataset = load_multiple_datasets(paths)
+
+        eval_one_shot(code_set, support_dataset, test_examples, model, tokenizer, neg=False)
+        eval_one_shot(code_set, support_dataset, test_examples, model, tokenizer, neg=True)
+        eval_two_shot(code_set, support_dataset, test_examples, model, tokenizer)
 
 if __name__ == "__main__":
-    run()
+    run_evaluation()

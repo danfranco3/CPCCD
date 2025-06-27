@@ -12,9 +12,9 @@ from code_clone_pkg.utils import extend_tokenizer_and_resize_model
 # Configuration
 MODEL_NAME = "Salesforce/codet5p-220m"
 OUTPUT_DIR = "results"
-MAX_LENGTH = 2500
+MAX_LENGTH = 1400
 EPOCHS = 3
-BATCH_SIZE = 1
+BATCH_SIZE = 4
 CLONE_DATASETS = [
     'python_cobol',
     'java_fortran',
