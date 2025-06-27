@@ -223,9 +223,9 @@ def run():
         evaluate_model(model, tokenizer, test_dataset, test_examples, output_path)
 
         paths = [
-            "data/codeNet/python_cobol_test.json",
-            "data/codeNet/java_fortran_test.json",
-            "data/codeNet/js_pascal_test.json"
+            "src/data/codeNet/python_cobol_test.json",
+            "src/data/codeNet/java_fortran_test.json",
+            "src/data/codeNet/js_pascal_test.json"
         ]
         
         support_dataset = load_multiple_datasets(paths)
