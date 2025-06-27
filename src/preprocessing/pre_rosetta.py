@@ -109,7 +109,7 @@ def print_clone_stats(train, test, label):
     print(f"  Test non-clones:  {sum(test['label'] == 0)}")
 
 def main():
-    max_chars = 650  # Filter snippet pairs where both are under 1000 chars
+    max_chars = 400  # Filter snippet pairs where both are under 1000 chars
     
     ds = load_dataset("christopher/rosetta-code", split='train')
     df = Dataset.to_pandas(ds)
