@@ -86,14 +86,13 @@ def create_balanced_clone_dataset(
     # Ensure clean and equal length
     df_target = df_target[["code"]].dropna().reset_index(drop=True)
     df_source = df_source[["code"]].dropna().reset_index(drop=True)
-    assert len(df_target) == len(df_source) == max_matches, f"Expected exactly {max_matches} matched pairs"
 
     # STEP 1: Split the matched pairs into 2 halves
-    df_target_pos = df_target.iloc[:50].reset_index(drop=True)
-    df_source_pos = df_source.iloc[:50].reset_index(drop=True)
+    df_target_pos = df_target.iloc[:int(len(df_target)*0.5)].reset_index(drop=True)
+    df_source_pos = df_source.iloc[:int(len(df_source)*0.5)].reset_index(drop=True)
 
-    df_target_neg = df_target.iloc[50:].reset_index(drop=True)
-    df_source_neg = df_source.iloc[50:].reset_index(drop=True)
+    df_target_neg = df_target.iloc[int(len(df_target)*0.5):].reset_index(drop=True)
+    df_source_neg = df_source.iloc[int(len(df_source)*0.5):].reset_index(drop=True)
 
     # STEP 2: Derange code2 in negative half
     codes2 = df_source_neg["code"].tolist()
@@ -148,8 +147,8 @@ def save_dataset(train_data, test_data, prefix='tasksplit_clones', data_folder='
 
 def main():
     
-    MAX_LENGTH = 700
-    MAX_MATCHES = 120
+    MAX_LENGTH = 400
+    MAX_MATCHES = 40
     DS_NAME = "iNeil77/CodeNet"
     
     code1_df, code2_df = stream_and_match_both(DS_NAME, "COBOL", "Python", max_code_len=MAX_LENGTH, max_matches=MAX_MATCHES)
