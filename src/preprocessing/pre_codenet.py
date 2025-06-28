@@ -71,48 +71,50 @@ def deranged_shuffle(arr: List[str], seed: int = 42) -> List[str]:
         if all(orig != shuffled[i] for i, orig in enumerate(arr)):
             return shuffled
 
-from sklearn.model_selection import train_test_split
-
-def create_balanced_clone_dataset(
+def create_balanced_clone_dataset_with_test_limit(
     df_target: pd.DataFrame,
     df_source: pd.DataFrame,
-    max_matches,
+    max_test_matches: int,
     seed: int = 42,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
-    From 100 matched pairs, create 50 positives and 50 negatives,
-    then split into balanced train/test sets (25+25 each).
+    Split matched samples into test/train using fixed number of test matches,
+    and build balanced datasets (positive + deranged negative) for both sets.
     """
-    # Ensure clean and equal length
+
     df_target = df_target[["code"]].dropna().reset_index(drop=True)
     df_source = df_source[["code"]].dropna().reset_index(drop=True)
 
-    # STEP 1: Split the matched pairs into 2 halves
-    df_target_pos = df_target.iloc[:int(len(df_target)*0.5)].reset_index(drop=True)
-    df_source_pos = df_source.iloc[:int(len(df_source)*0.5)].reset_index(drop=True)
+    df_target_test = df_target.iloc[:max_test_matches].reset_index(drop=True)
+    df_source_test = df_source.iloc[:max_test_matches].reset_index(drop=True)
 
-    df_target_neg = df_target.iloc[int(len(df_target)*0.5):].reset_index(drop=True)
-    df_source_neg = df_source.iloc[int(len(df_source)*0.5):].reset_index(drop=True)
+    df_target_train = df_target.iloc[max_test_matches:].reset_index(drop=True)
+    df_source_train = df_source.iloc[max_test_matches:].reset_index(drop=True)
 
-    # STEP 2: Derange code2 in negative half
-    codes2 = df_source_neg["code"].tolist()
-    deranged_codes2 = deranged_shuffle(codes2, seed=seed)
+    def build_pos_neg(df1, df2, label, seed):
+        pos_df = pd.DataFrame({
+            "code1": df1["code"],
+            "code2": df2["code"],
+            "label": label
+        })
+        
+        deranged_codes = deranged_shuffle(df2["code"].tolist(), seed=seed)
+        neg_df = pd.DataFrame({
+            "code1": df1["code"],
+            "code2": deranged_codes,
+            "label": 1 - label
+        })
+        return pos_df, neg_df
 
-    # STEP 3: Construct positive and negative DataFrames
-    pos_df = pd.DataFrame({
-        "code1": df_target_pos["code"],
-        "code2": df_source_pos["code"],
-        "label": 1
-    })
+    
+    test_pos, test_neg = build_pos_neg(df_target_test, df_source_test, 1, seed + 100)
+    test_df = pd.concat([test_pos, test_neg]).sample(frac=1.0, random_state=seed).reset_index(drop=True)
 
-    neg_df = pd.DataFrame({
-        "code1": df_target_neg["code"],
-        "code2": deranged_codes2,
-        "label": 0
-    })
+   
+    train_pos, train_neg = build_pos_neg(df_target_train, df_source_train, 1, seed + 200)
+    train_df = pd.concat([train_pos, train_neg]).sample(frac=1.0, random_state=seed).reset_index(drop=True)
 
-    full_df = pd.concat([pos_df, neg_df], ignore_index=True)
-    return full_df
+    return train_df, test_df
 
 
 def split_clone_dataset(
@@ -148,24 +150,29 @@ def save_dataset(train_data, test_data, prefix='tasksplit_clones', data_folder='
 def main():
     
     MAX_LENGTH = 400
-    MAX_MATCHES = 40
+    MAX_MATCHES = 24
+    MAX_TEST_MATCHES = 8
     DS_NAME = "iNeil77/CodeNet"
     
     code1_df, code2_df = stream_and_match_both(DS_NAME, "COBOL", "Python", max_code_len=MAX_LENGTH, max_matches=MAX_MATCHES)
-    df = create_balanced_clone_dataset(code1_df, code2_df, MAX_MATCHES)
-    train_df, test_df = split_clone_dataset(df)
+    train_df, test_df = create_balanced_clone_dataset_with_test_limit(
+        code1_df, code2_df, max_test_matches=MAX_TEST_MATCHES
+    )
     save_dataset(train_df, test_df, 'python_cobol', data_folder='codeNet')
     
     
     code1_df, code2_df = stream_and_match_both(DS_NAME, "Fortran", "Java", max_code_len=MAX_LENGTH, max_matches=MAX_MATCHES)
-    df = create_balanced_clone_dataset(code1_df, code2_df, MAX_MATCHES)
-    train_df, test_df = split_clone_dataset(df)
+    train_df, test_df = create_balanced_clone_dataset_with_test_limit(
+        code1_df, code2_df, max_test_matches=MAX_TEST_MATCHES
+    )
+
     save_dataset(train_df, test_df, 'java_fortran', data_folder='codeNet')
 
 
     code1_df, code2_df = stream_and_match_both(DS_NAME, "Pascal", "JavaScript", max_code_len=MAX_LENGTH, max_matches=MAX_MATCHES)
-    df = create_balanced_clone_dataset(code1_df, code2_df, MAX_MATCHES)
-    train_df, test_df = split_clone_dataset(df)
+    train_df, test_df = create_balanced_clone_dataset_with_test_limit(
+        code1_df, code2_df, max_test_matches=MAX_TEST_MATCHES
+    )
     save_dataset(train_df, test_df, 'js_pascal', data_folder='codeNet')
     
     

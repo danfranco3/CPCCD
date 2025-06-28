@@ -5,18 +5,27 @@ import json
 from datasets import load_dataset, Dataset
 from sklearn.model_selection import train_test_split
 
-def get_language_pairs(df, lang1, lang2):
+def filter_df(df, max_chars):
+    return df[
+        df['code'].notnull() &
+        ~df['code'].str.contains(r"\$ sudo", na=False) &
+        (df['code'].str.len() < max_chars)
+    ].copy()
+
+def get_language_pairs_filtered(df, lang1, lang2, max_chars):
     df1 = df[df['language_name'] == lang1]
     df2 = df[df['language_name'] == lang2]
-    
-    common_tasks = set(df1['task_name']).intersection(set(df2['task_name']))
-    df1 = df1[df1['task_name'].isin(common_tasks)].copy()
-    df2 = df2[df2['task_name'].isin(common_tasks)].copy()
-    
-    df1 = df1[df1['task_name'] != 'Comments']
-    df2 = df2[df2['task_name'] != 'Comments']
-    
+
+    df1 = filter_df(df1, max_chars)
+    df2 = filter_df(df2, max_chars)
+
+    common_tasks = set(df1['task_name']) & set(df2['task_name']) - {"Comments"}
+
+    df1 = df1[df1['task_name'].isin(common_tasks)]
+    df2 = df2[df2['task_name'].isin(common_tasks)]
+
     return df1[['task_name', 'code']], df2[['task_name', 'code']]
+
 
 
 def build_positive_pairs(df1, df2, max_chars=None):
@@ -54,16 +63,13 @@ def build_negative_pairs(df1, df2, task_pool, num_pairs, max_chars=None):
 
     return pd.DataFrame(negatives)
 
-
-
-def generate_clone_dataset(df, lang1, lang2, test_size=0.3, seed=42, max_chars=None):
-    df1, df2 = get_language_pairs(df, lang1, lang2)
-    
-    df1 = df1[~df1["code"].str.contains("$ sudo", na=False)].reset_index(drop=True)
-    df2 = df2[~df2["code"].str.contains("$ sudo", na=False)].reset_index(drop=True)
-    
+def generate_clone_dataset(df, lang1, lang2, n_train_samples, n_test_samples=8, seed=42, max_chars=400):
+    df1, df2 = get_language_pairs_filtered(df, lang1, lang2, max_chars)
     tasks = sorted(set(df1['task_name']) & set(df2['task_name']))
-    train_tasks, test_tasks = train_test_split(tasks, test_size=test_size, random_state=seed)
+
+    # Now tasks only contain valid, filtered task pairs
+    test_tasks = tasks[:n_test_samples]
+    train_tasks = tasks[n_test_samples:(n_test_samples+n_train_samples)]
 
     def subset(df_lang, task_list):
         return df_lang[df_lang['task_name'].isin(task_list)]
@@ -83,7 +89,6 @@ def generate_clone_dataset(df, lang1, lang2, test_size=0.3, seed=42, max_chars=N
     test_data = pd.concat([test_pos, test_neg]).sample(frac=1.0, random_state=seed).reset_index(drop=True)
 
     return train_data, test_data
-
 
 
 def save_dataset(train_data, test_data, prefix='tasksplit_clones', data_folder='rosetta'):
@@ -109,22 +114,25 @@ def print_clone_stats(train, test, label):
     print(f"  Test non-clones:  {sum(test['label'] == 0)}")
 
 def main():
-    max_chars = 400  # Filter snippet pairs where both are under 1000 chars
-    
+    max_chars = 400
+    n_test_samples = 7
+    n_train_samples = 14
+
     ds = load_dataset("christopher/rosetta-code", split='train')
     df = Dataset.to_pandas(ds)
 
-    train, test = generate_clone_dataset(df, 'Java', 'Fortran', test_size=0.3, max_chars=max_chars)
+    train, test = generate_clone_dataset(df, 'Java', 'Fortran', n_train_samples, n_test_samples=n_test_samples, max_chars=max_chars)
     print_clone_stats(train, test, "Java-Fortran")
     save_dataset(train, test, prefix='java_fortran')
 
-    train, test = generate_clone_dataset(df, 'Python', 'COBOL', test_size=0.3, max_chars=max_chars)
-    print_clone_stats(train, test, "Python-COBOL")    
+    train, test = generate_clone_dataset(df, 'Python', 'COBOL', n_train_samples, n_test_samples=n_test_samples, max_chars=max_chars)
+    print_clone_stats(train, test, "Python-COBOL")
     save_dataset(train, test, prefix='python_cobol')
 
-    train, test = generate_clone_dataset(df, 'JavaScript', 'Free Pascal', test_size=0.3, max_chars=max_chars)
+    train, test = generate_clone_dataset(df, 'JavaScript', 'Free Pascal', n_train_samples, n_test_samples=n_test_samples, max_chars=max_chars)
     print_clone_stats(train, test, "JavaScript-Pascal")
     save_dataset(train, test, prefix='js_pascal')
+
     
 
 if __name__ == "__main__":

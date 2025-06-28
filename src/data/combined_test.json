@@ -1,0 +1,732 @@
+[
+  {
+    "code1": "print(int(input())**3)",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. A-Birthday.\n \nDATA DIVISION.\nWORKING-STORAGE SECTION.\n01 INP      PIC X(100).\n01 IN-A     PIC 9(2).\n01 IN-B     PIC 9(2).\n \nPROCEDURE DIVISION.\nMAIN-001.\n  ACCEPT INP.\n  UNSTRING INP DELIMITED BY ALL ' '\n      INTO IN-A IN-B.\n\n  IF (IN-A <= 8) AND (IN-B <= 8)\n    DISPLAY 'Yay!'\n  ELSE \n    DISPLAY ':('\n  END-IF.\n \nMAIN-EXIT.\n  STOP RUN.",
+    "label": 0
+  },
+  {
+    "code1": "r = int(input())\nprint(r**2)",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROGRAM_ID.\n\nDATA DIVISION.\nWORKING-STORAGE SECTION.\n01 r          PIC 9(10).\n01 ans        PIC 9(10).\n01 zs         PIC Z(9)9.\n\nPROCEDURE DIVISION.\n  ACCEPT r.\n  COMPUTE ans = 3 * r ** 2.\n  MOVE ans TO zs.\n  DISPLAY FUNCTION TRIM(zs).\n  STOP RUN.\n",
+    "label": 0
+  },
+  {
+    "code1": "n,m=map(int,input().split())\nif n == m:\n  print('Yes')\nelse:\n  print('No')",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROGRAM_ID.\n\nDATA DIVISION.\nWORKING-STORAGE SECTION.\n01 LN             PIC X(7).\n01 N              PIC 9(3).\n01 M              PIC 9(3).\n01 ans            PIC X(3).\n\nPROCEDURE DIVISION.\n  ACCEPT LN.\n  UNSTRING LN DELIMITED BY SPACE INTO N M.\n  IF N = M\n      DISPLAY \"Yes\"\n  ELSE\n      DISPLAY \"No\"\n  END-IF.\n  STOP RUN.\n",
+    "label": 1
+  },
+  {
+    "code1": "r=int(input())\nprint(3*(r**2))",
+    "code2": "Identification Division.\nProgram-ID. caddi2018a.\n\nData Division.\nWorking-Storage Section.\n\n77 n pic 9(4).\n77 c pic 9.\n\nProcedure Division.\n\naccept n.\ninspect n tallying c for all '2'.\ndisplay c.\nstop run.\n",
+    "label": 0
+  },
+  {
+    "code1": "s=input()\nif s[2]==s[3] and s[4]==s[5]:\n    print(\"Yes\")\nelse:print(\"No\")",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROGRAM_ID.\n\nDATA DIVISION.\nWORKING-STORAGE SECTION.\n01 S              PIC X(30).\n\nPROCEDURE DIVISION.\n  ACCEPT S.\n  IF S(3:1) = S(4:1) AND S(5:1) = S(6:1)\n      DISPLAY \"Yes\"\n  ELSE\n      DISPLAY \"No\"\n  END-IF.\n  STOP RUN.\n",
+    "label": 1
+  },
+  {
+    "code1": "S = input()\n\nif S == 'Sunny':\n    print('Cloudy')\nelif S == 'Cloudy':\n    print('Rainy')\nelse:\n    print('Sunny')",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. ABC111B.\n\nDATA DIVISION.\nWORKING-STORAGE SECTION.\n77 N PIC 999.\n\nPROCEDURE DIVISION.\nACCEPT N.\nCOMPUTE N = (N + 110) / 111.\nCOMPUTE N = N * 111.\nDISPLAY N.\nSTOP RUN.\n",
+    "label": 0
+  },
+  {
+    "code1": "a=int(input())\nprint(1110-a)",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROGRAM_ID.\n\nDATA DIVISION.\nWORKING-STORAGE SECTION.\n01 ln         PIC X(300).\n01 S          PIC X(100).\n01 T          PIC X(100).\n01 ans        PIC X(200).\n\nPROCEDURE DIVISION.\n  ACCEPT ln.\n  UNSTRING ln DELIMITED BY SPACE INTO S T.\n  STRING FUNCTION TRIM(T) FUNCTION TRIM(S) INTO ans.\n  DISPLAY FUNCTION TRIM(ans).\n  STOP RUN.\n",
+    "label": 0
+  },
+  {
+    "code1": "def sep():\n    return map(int,input().strip().split(\" \"))\ndef lis():\n    return list(sep())\n\n\nr=int(input())\nprint((2*22*r)/7)\n",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROGRAM_ID.\n\nDATA DIVISION.\nWORKING-STORAGE SECTION.\n01 R              PIC 9(3)V9(7).\n01 PI             PIC 9(3)V9(7) VALUE 3.1415926.\n01 ans            PIC 9(3)V9(7).\n01 zs             PIC Z(2)9.9(7).\n\nPROCEDURE DIVISION.\n  ACCEPT R.\n  COMPUTE ans = 2 * R * PI.\n  MOVE ans TO zs.\n  DISPLAY FUNCTION TRIM(zs).\n  STOP RUN.",
+    "label": 1
+  },
+  {
+    "code1": "print(1 if int(input()) == 0 else 0)",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. SORTNUM.\n\nDATA DIVISION.\n    WORKING-STORAGE SECTION.\n      \n      01 X PIC 9.\n\nPROCEDURE DIVISION.\n    MAIN SECTION.\n      \n      ACCEPT X.\n      \n      IF X = 0 THEN\n      \tDISPLAY 1\n      ELSE\n      \tDISPLAY 0\n      END-IF.\n\n\n    STOP RUN.\n",
+    "label": 1
+  },
+  {
+    "code1": "a = input()\nif a =='ABC':\n    print('ARC')\nelse:\n    print('ABC')",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROGRAM_ID.\n\nDATA DIVISION.\nWORKING-STORAGE SECTION.\n01 S              PIC X(3).\n\nPROCEDURE DIVISION.\n  ACCEPT S.\n  IF \"ARC\" = S\n      DISPLAY \"ABC\"\n  ELSE\n      DISPLAY \"ARC\"\n  END-IF.\n  STOP RUN.\n",
+    "label": 1
+  },
+  {
+    "code1": "X = int(input())\nif X >= 30:\n  print(\"Yes\")\nelse:\n  print(\"No\")\n",
+    "code2": "IDENTIFICATION  DIVISION.\nPROGRAM-ID.     HELLO.\n\n \nDATA DIVISION.\n\tWORKING-STORAGE SECTION.\n        01 X PIC S99.\n      \nPROCEDURE       DIVISION.\n    ACCEPT X.\n    \n    IF X < 30 THEN \n      DISPLAY 'No'\n    ELSE\n      DISPLAY 'Yes'\n    END-IF.\n    \n    STOP RUN.",
+    "label": 1
+  },
+  {
+    "code1": "s = str(input())\nprint(s[0:3] + \"8\" + s[4:])",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROGRAM_ID.\n\nDATA DIVISION.\nWORKING-STORAGE SECTION.\n01 ln         PIC X(30).\n01 A          PIC 9(10).\n01 B          PIC 9(10).\n01 ans        PIC 9(10).\n01 zs         PIC Z(9)9.\n\nPROCEDURE DIVISION.\n  ACCEPT A.\n  ACCEPT B.\n  COMPUTE ans = 6 - A - B.\n  MOVE ans TO zs.\n  DISPLAY FUNCTION TRIM(zs).\n  STOP RUN.\n",
+    "label": 0
+  },
+  {
+    "code1": "s = input()\nt = ''\n\nfor _ in range(len(s)):\n    t += 'x'\n\nprint(t)",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROGRAM_ID.\n\nDATA DIVISION.\nWORKING-STORAGE SECTION.\n01 S              PIC X(100).\n01 ans            PIC X(100).\n\nPROCEDURE DIVISION.\n  ACCEPT S.\n  MOVE ALL \"x\" TO ans(1:FUNCTION STORED-CHAR-LENGTH(S))\n  DISPLAY ans(1:FUNCTION STORED-CHAR-LENGTH(ans)).\n  STOP RUN.\n",
+    "label": 1
+  },
+  {
+    "code1": "n,d = map(int,input().split())\nif n / (d*2+1) <= 1:\n    print(1)\nelif n % (d*2+1) == 0:\n    print(n//(d*2+1))\nelse:\n    print(n//(d*2+1)+1)",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. 099C.\n*>\nDATA DIVISION.\nWORKING-STORAGE SECTION.\n01 INP        PIC  X(14).\n01 N          PIC  9(6) COMP.\n01 K          PIC  9(6) COMP.\n01 OUT        PIC  Z(5)9.\n*>\nPROCEDURE DIVISION.\n  ACCEPT INP.\n  UNSTRING INP DELIMITED BY ' '\n      INTO N K.\n*>\n  COMPUTE OUT = (N - 2) / (K - 1) + 1.\n  DISPLAY FUNCTION TRIM(OUT).\n*>\n  STOP RUN.\n",
+    "label": 0
+  },
+  {
+    "code1": "N = str(input())\nprint(N.count(\"2\"))",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROGRAM_ID.\n\nDATA DIVISION.\nWORKING-STORAGE SECTION.\n01 N              PIC 9(10).\n01 S              PIC X(50).\n01 cnt            PIC 9(10).\n01 ans            PIC Z(9)9.\n\nPROCEDURE DIVISION.\n  ACCEPT N.\n  ACCEPT S.\n  INSPECT S TALLYING cnt FOR ALL \"ABC\".\n  MOVE cnt TO ans.\n  DISPLAY ans.\n  STOP RUN.\n",
+    "label": 0
+  },
+  {
+    "code1": "S, W = map(int, input().split())\nprint('unsafe' if W >= S else 'safe')",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROGRAM_ID.\n\nDATA DIVISION.\nWORKING-STORAGE SECTION.\n01 ln             PIC X(30).\n01 S              PIC 9(10).\n01 W              PIC 9(10).\n\nPROCEDURE DIVISION.\n  ACCEPT ln.\n  UNSTRING ln DELIMITED BY SPACE INTO S W.\n  IF W < S\n      DISPLAY \"safe\"\n  ELSE\n      DISPLAY \"unsafe\"\n  END-IF.\n  STOP RUN.\n",
+    "label": 1
+  },
+  {
+    "code1": "import java.util.Scanner;\nimport java.util.ArrayList;\n\npublic class Main {\n\n  static int gcd(int a, int b) {\n    if (a == 0)\n      return b;\n    else\n      return gcd(b % a, a);\n  }\n\n  public static void main(String[] args) {\n    Scanner sc = new Scanner(System.in);\n    int x = sc.nextInt();\n    int y = 360;\n    System.out.println(360 / gcd(x, y));\n  }\n}\n",
+    "code2": "program colon\nimplicit none\ninteger a, b, h, m\ndouble precision p\ndouble precision x2\nread *, a, b, h, m\n!print *, a\n!print *, b\n!print *, h\n!print *, m\np = 4d0*datan(1d0)\n!print *, m/60.\n!print *, h/12. + m/720.\nx2 = a**2 + b**2 - 2d0 * a * b * dcos((h/12d0-m*11d0/720d0)*2d0*p)\nprint *, sqrt(x2)\nend program",
+    "label": 0
+  },
+  {
+    "code1": "import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) throws Exception {\n        // Your code here!\n        \n        Scanner scan = new Scanner(System.in);\n        \n        char c = scan.next().charAt(0);\n        \n        if (Character.isUpperCase(c)){\n            System.out.println(\"A\");\n        }\n        else{\n            System.out.println(\"a\");\n        }\n    }\n}\n",
+    "code2": "program main\ninteger::x,y\nread*,x,y\nif(mod(y,2)==0 .and. 2*x<=y .and. y<=4*x)then\n print*,\"Yes\"\nelse \n print*,\"No\"\nend if\nend program main",
+    "label": 0
+  },
+  {
+    "code1": "import java.util.*;\n\npublic class Main{\n\tpublic static void main(String[] args){\n\t\tScanner sc=new Scanner(System.in);\n\t\tint n=sc.nextInt();\n\t\tint []ans=new int[n+1];\n\t\tint cnt=0;\n\t\tfor(int x=1;x<=100;x++)for(int y=1;y<=100;y++)for(int z=1;z<=100;z++) {\n\t\t\tint d=x*x+y*y+z*z+x*y+y*z+z*x;\n\t\t\tif(d<=n)ans[d]++;\n\t\t}\n\t\tfor(int i=1;i<=n;i++) {\n\t\t\tSystem.out.println(ans[i]);\n\t\t}\n\t}\n}",
+    "code2": "program AIsing2020C\n    implicit none\n    integer(8)::N,i,j,k,A(10000),m\n    read*,N\n    A=0\n \n    do i=1,100\n        do j=1,100\n            do k=1,100\n                m=i**2+j**2+k**2+i*j+j*k+k*i\n                if(m<=10000)A(m)=A(m)+1\n            end do\n        end do\n    end do\n \n    do i=1,N\n        print'(i0)',A(i)\n    end do\nend program AIsing2020C",
+    "label": 1
+  },
+  {
+    "code1": "import java.util.Scanner;\n\npublic class Main {\n\n\tpublic static void main(String[] args) {\n\t\t Scanner sc = new Scanner(System.in);\n\t\t int X = sc.nextInt();\n\t\t int Y = sc.nextInt();\n\t\t String ans = \"No\";\n\t\t for (int i = 0; i <= X; i++) {\n\t\t\tif (Y == -2*i + 4*X) { \n\t\t\t\tans=\"Yes\";\n\t\t\t} \n\t\t }\n\t\t System.out.print(ans);\n\t}\n}",
+    "code2": "program main\n  implicit none\n  integer :: a, b\n  read *, a, b\n  print \"(i0)\", a * b\nend program main\n",
+    "label": 0
+  },
+  {
+    "code1": "import java.util.*;\npublic class Main {\n  public static void main(String[] args) {\n    Scanner sc = new Scanner(System.in);\n    int rating = sc.nextInt();\n    System.out.println((1999 - rating) / 200 + 1);\n  }\n}\n",
+    "code2": "program main\n    use,intrinsic :: iso_fortran_env\n    implicit none\n    integer(int32):: x\n\n    read*, x\n    print'(i0)', 10 - x/200\nend program main",
+    "label": 1
+  },
+  {
+    "code1": "import java.util.*;\npublic class Main {\n\n    public static void main(String[] args)\n    {\n        Scanner in=new Scanner(System.in);\n        long n = in.nextLong();\n\n        StringBuilder answer = new StringBuilder();\n        while (n > 0) {\n            n--;\n            answer.append((char) ('a' + n % 26));\n            n /= 26;\n        }\n\n        System.out.println(answer.reverse());\n    }\n}\n",
+    "code2": "program postdocs\n  implicit none\n  character(200000) :: t\n  integer :: n, i\n  read(*,*) t\n  n = len_trim(t)\n  do i = 1, n\n    if (t(i:i) == '?') t(i:i) = 'D'\n  end do\n  write(*,'(a)') trim(t)\nend program postdocs",
+    "label": 0
+  },
+  {
+    "code1": "import java.util.*;\nimport java.io.*;\npublic class Main{\n    public static void main(String[] args){\n\t\tScanner sc = new Scanner(System.in);\n\t\tPrintWriter ou = new PrintWriter(System.out);\n\t\tou.println(Math.abs(Integer.parseInt(sc.next()) * 60 + Integer.parseInt(sc.next()) - Integer.parseInt(sc.next()) * 60 - Integer.parseInt(sc.next())) - Integer.parseInt(sc.next()));\n\t\tou.flush();\n\t}\n}",
+    "code2": "program million_change\n    implicit none\n    character(200000) :: S\n    character(200000) :: T\n    integer i\n    integer :: k = 0\n    read *, S\n    read *, T\n    do i = 1, len_trim(S)\n        if(S(i:i) /= T(i:i))then\n            S(i:i) = T(i:i)\n            k = k + 1\n        end if\n    end do\n    print *, k\nend program",
+    "label": 0
+  },
+  {
+    "code1": "\nimport java.util.*;\n\npublic class Main {\n\n\tpublic static void main(String args[])\n\t{\n\t\tScanner sc=new Scanner(System.in);\n\t\tint n=sc.nextInt();\n\t\tint m=sc.nextInt();\n\t\tlong a,b,count=0;\n\t\tfor(int i=0;i<n;i++)\n\t\t{\n\t\t\ta=sc.nextLong();\n\t\t\tb=sc.nextLong();\n\t\t\tif(Math.sqrt((a*a)+(b*b))<=m) \n\t\t\t\t{\n\t\t\t\t \tcount++;\n\t\t\t\t}\n\t\t\t\n\t\t}\n\t\tSystem.out.println(count);\n\t}\n\t\n}\n",
+    "code2": "program distance\n    integer :: n, i\n    integer :: ans = 0\n    integer(8) :: d\n    integer(8), allocatable :: x(:)\n    integer(8), allocatable :: y(:)\n\n    read *, n, d\n    allocate(x(n))\n    allocate(y(n))\n    do i = 1, n\n        read *, x(i), y(i)\n        if(d**2 >= ((x(i)**2)+(y(i)**2)))then\n            ans = ans+1\n        end if\n    end do\n    print *, ans\nend program",
+    "label": 1
+  },
+  {
+    "code1": "import java.util.Scanner;\n\npublic class Main{\n  public static void main(String[] agrs){\n    Scanner sc = new Scanner(System.in);\n    int k = sc.nextInt();\n    \n    String str = \"ACL\";\n    for(int i=0; i<k; i++){\n      System.out.print(str);\n    }\n  }\n}",
+    "code2": "program repeat_acl\n  implicit none\n  integer :: k\n  read(*,*) k\n  write(*,'(a)') repeat('ACL', k)\nend program repeat_acl",
+    "label": 1
+  },
+  {
+    "code1": "import java.util.Scanner;\n\npublic class Main {\n\tpublic static void main(String[] args) {\n\t\tScanner scan = new Scanner(System.in);\n\n\t\tlong N = scan.nextLong();\n\t\tlong p = scan.nextLong();\n\t\tlong ans = 0;\n\t\tfor (long i = 0; i < N - 1; i++) {\n\t\t\tlong q = scan.nextLong();\n\t\t\tans += (p * q) % 1000000007;\n\t\t\tp = (p + q) % 1000000007;\n\t\t}\n\t\tSystem.out.println(ans % 1000000007);\n\t}\n}",
+    "code2": "program sum_of_product\n    implicit none\n    integer(16) n, i, y,ans,x,z,j,t\n    integer(16),allocatable :: a(:)\n\n    read *, n\n    allocate(a(n))\n    read *, a\n    y=0\n    x=0\n    z=0\n    j=0\n    t=sum(a)\n    do i=1,n\n        x=x+a(i)\n        y=t-x\n        z=y*a(i)\n        j=j+z\n    end do\n    ans=modulo(j,1000000007)\n    print *,ans\nend program sum_of_product",
+    "label": 1
+  },
+  {
+    "code1": "import java.util.*;\nimport java.io.*;\nimport java.lang.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n        String s = sc.next();\n\n        if (s.charAt(s.length()-1) == 's')\n            System.out.println(s+\"es\");\n        else\n            System.out.println(s+'s');\n    }\n}",
+    "code2": "program a179\n\nimplicit none\ncharacter(len=1002) :: s\ninteger :: i, j\n\nread *, s\n\ndo i= 1, 1001\n if(s(i:i)==' ') then\n  j = i-1\n  exit\n end if\nend do\n\n!print *, j\n\nif(s(j:j)=='s') then\n s(j+1:j+2) = 'es' \nelse\n s(j+1:j+1) = 's'\nend if\n\nprint *, trim(s)\n\nend program a179",
+    "label": 1
+  },
+  {
+    "code1": "import java.util.*;\nimport java.io.*;\nimport java.lang.*;\n\npublic class Main {\n    public static void main(String[] args){\n        Scanner sc = new Scanner(System.in);\n\n        String a = sc.next();\n        String b = sc.next();\n\n        if (a.equals(b.substring(0,b.length()-1)))\n            System.out.println(\"Yes\");\n        else\n            System.out.println(\"No\");\n    }\n}\n",
+    "code2": "program abc36\n implicit none\n integer(8)::N,ia,ans=0,x\n read(*,*)N\n do ia=1,N\n  x=floor(dble(N)/dble(ia))\n  ans=ans+x*(x+1)*ia/2\n end do\n print'(i0)',ans\nend program abc36",
+    "label": 0
+  },
+  {
+    "code1": "import java.util.*;\npublic class Main {\n  public static void main(String[] args) {\n    Scanner sc = new Scanner(System.in);\n    int n = sc.nextInt();\n    int count = 0;\n    for (int i = 0; i < n; i++) {\n      int a = sc.nextInt();\n      if ((i + 1) % 2 == 0 || a % 2 == 0) continue;\n      count++;\n    }\n    System.out.println(count);\n  }\n}\n",
+    "code2": "program AIsing2020B\n    implicit none\n    integer(8)::N,i,ans=0\n    integer(8),allocatable,dimension(:)::A\n    read*,N\n    allocate(A(N))\n    read*,A\n    do i=1,N,2\n        if(mod(A(i),2)==1)ans=ans+1\n    end do\n    print'(i0)',ans\nend program AIsing2020B",
+    "label": 1
+  },
+  {
+    "code1": "import java.util.*;\npublic class Main{\n \tpublic static void main(String[] args) {\n \t    \n\t\tScanner sc = new Scanner(System.in);\n      \tString s =sc.next();\n      \t\n      \tString str1 = s.substring(0, 3);\n      \n      \tSystem.out.println(str1);\n    }\n}\n",
+    "code2": "program main\n  implicit none\n  integer :: k\n  character(100) :: s\n  read *, k\n  read *, s\n  if (len_trim(s) > k) then\n    print \"(a,a)\", s(1:k), \"...\"\n  else\n    print \"(a)\", trim(s)\n  end if\nend program main\n",
+    "label": 0
+  },
+  {
+    "code1": "import java.util.Scanner;\t\t\t\t\t\t  \npublic class Main{\n    public static void main(String[] args) {\n        Scanner stdIn= new Scanner(System.in);\n        int x = stdIn.nextInt();\n        int y = stdIn.nextInt();\n        System.out.println(x*y);\n    }\n}",
+    "code2": "program calc\n    integer a\n    integer :: ans = 0\n    read *, a\n    ans = a+(a**2)+(a**3)\n    print *, ans\nend program",
+    "label": 0
+  },
+  {
+    "code1": "import java.util.Scanner;\n\npublic class Main{\n  public static void main(String args[]){\n    Scanner scanner = new Scanner(System.in);\n    int x = scanner.nextInt();  \n    if(x>=30){System.out.println(\"Yes\");}else{System.out.println(\"No\");}\n  \n  \n  }\n}\n",
+    "code2": "program main\n\timplicit none\n    integer a\n    read *,a\n    if (a>=30) then\n    \tprint *, \"Yes\"\n    else\n    \tprint *, \"No\"\n    end if\nend program main",
+    "label": 1
+  },
+  {
+    "code1": "'use strict'\n\nconst main = (INPUT) => {\n  const S = INPUT.split('\\n')[0]\n  console.log(S.slice(0, 3))\n}\n\nmain(require('fs').readFileSync('/dev/stdin', 'utf8'))\n",
+    "code2": "program main;\nvar s : string;\nbegin\n    readln(s);\n    if s = 'ABC'\n    then writeln('ARC')\n    else writeln('ABC');\nend.",
+    "label": 0
+  },
+  {
+    "code1": "function gcd(a,b){while(b)[a,b]=[b,a%b];return a};\nconsole.log(function(args){\n  const X = args|0;\n  return 360 * X / gcd(X,360) / X ;\n}(require('fs').readFileSync('/dev/stdin', 'utf8')));",
+    "code2": "program main;\nvar a,b : integer;\nbegin \n  read(a,b);\n  writeln(a*b);\nend.",
+    "label": 0
+  },
+  {
+    "code1": "\nconst func = (input)=>{\n  let a = input;\n  let result = a**1 + a**2+a**3 \n  console.log(result);\n}\n\n\n\n\n\nfunc(require(\"fs\").readFileSync(\"/dev/stdin\", \"utf8\"))\n",
+    "code2": "program main;\nvar a : integer;\nbegin\n\treadln(a);\n    writeln(a + a * a + a * a * a);\nend.    ",
+    "label": 1
+  },
+  {
+    "code1": "function Main(input) {\n    var tmp = input.split(\" \");\n    var a = parseInt(tmp[0]);\n    var b = parseInt(tmp[1]);\n    \n    console.log(a*b);\n}\nMain(require(\"fs\").readFileSync(\"/dev/stdin\", \"utf8\"));",
+    "code2": "var h1,m1,h2,m2,k:integer;begin readln(h1,m1,h2,m2,k);writeln((60*(h2-h1)+m2-m1-k));end.",
+    "label": 0
+  },
+  {
+    "code1": "inp = require('fs').readFileSync('/dev/stdin', 'utf8').trim().split('\\n')\nl = inp.shift().split(' ')\na = l.shift() * 1\nb = l.shift() * 1 \nc = l.shift() * 1 \nk = inp.shift() * 1\ncnt = 0;\nwhile (cnt < k && a >= b) {\n    b = b + b\n    cnt++\n} \nwhile (cnt < k && b >= c) {\n    c = c + c\n    cnt++\n} \nconsole.log(a < b && b < c ? \"Yes\": \"No\")\n",
+    "code2": "var\n\tA,B,C,K:Longint;\nbegin\n\tread(A,B,C,K);\n\twhile A>=B do begin\n\t\tdec(K);\n\t\tB:=B*2;\n\tend;\n\twhile B>=C do begin\n\t\tdec(K);\n\t\tC:=C*2;\n\tend;\n\tif K<0 then writeln('No')else writeln('Yes');\nend.",
+    "label": 1
+  },
+  {
+    "code1": "const input = require('fs').readFileSync('/dev/stdin', 'utf-8').split('\\n')\nconst [X, N] = input[0].split(' ').map(Number)\n\nconst solver = () => {\n  if (N === 0) return X\n  const p = input[1].split(' ').map(Number).map(v => v - X)\n  if (!p.includes(0)) return X\n  for (let i = 1; ; i++) {\n    if (!p.includes(-i)) return X - i\n    if (!p.includes(i)) return X + i\n  }\n}\n\nconsole.log(solver())",
+    "code2": "var\n\ta,b,c,d:Longint;\nbegin\n\tread(a,b,c,d);\n\twriteln(sqrt(a*a+b*b-2*a*b*cos((30*c-5.5*d)*3.14159265358979/180)):0:9);\nend.\n",
+    "label": 0
+  },
+  {
+    "code1": "\"use strict\";\n\nconst main = (input) => {\n    const spi = input.split('\\n');\n    const k = parseInt(spi[0]);\n    const s = spi[1];\n\n    const n = s.length;\n    if (n <= k) console.log(s);\n    else console.log(`${s.substr(0, k)}...`);\n};\n\nmain(require(\"fs\").readFileSync(\"/dev/stdin\", \"utf8\"));\n",
+    "code2": "var\n\tN,T:int64;\nbegin\n\tread(N);\n\tT:=1;\n\twhile N>=T do begin\n\t\tdec(N,T);\n\t\tT:=T*26;\n\tend;\n\twhile T>1 do begin\n\t\tT:=T div 26;\n\t\twrite(Chr(N div T+97));\n\t\tN:=N mod T;\n\tend;\nend.",
+    "label": 0
+  },
+  {
+    "code1": "const input = require(\"fs\").readFileSync(\"/dev/stdin\", \"utf8\")\nconst lines = input.split('\\n')\nconst N = lines[0] - 0\nconst c = lines[1].split('')\n\nlet rm = []\nfor (let i = 0; i < N; i++) {\n    if (c[i] === 'R') {\n        rm.push(i)\n    }\n}\nconst r = rm.length\nconst w = N - r\n\nlet count = 0\nfor (let i = 0; i < r; i++) {\n    if (c[i] === 'W') {\n        count++\n    }\n}\nconsole.log(count)\n",
+    "code2": "{$R-,S-,Q-,I-,O+}\nvar n,l,r,ans:longint;s:ansistring;\nbegin\n  readln(n);\n  readln(s);\n  ans:=0;\n  l:=1;\n  r:=n;\n  while l<r do begin\n    while (l<=n) and (s[l]='R') do inc(l);\n    while (1<=r) and (s[r]='W') do dec(r);\n    if l>=r then break else\n    begin\n      inc(ans);\n      inc(l);\n      dec(r);\n    end;\n  end;\n  writeln(ans);\nend.",
+    "label": 1
+  },
+  {
+    "code1": "process.stdin.resume();\nprocess.stdin.setEncoding('utf8');\n\nvar lines = [];\nvar reader = require('readline').createInterface({\n  input: process.stdin,\n  output: process.stdout\n});\nreader.on('line', (line) => {\n  lines.push(line);\n});\nreader.on('close', () => {\nconst n = Number(lines[0]);\nconst str = \"ACL\";\nconsole.log(str.repeat(n));\n});",
+    "code2": "var\n  n, i: integer;\nbegin\n  read(n);\n  for i:=1 to n do write('ACL');\nend.",
+    "label": 1
+  },
+  {
+    "code1": "function Main(input) {\n  const lines = input.split('\\n');\n  const S = lines[0];\n  let answer = 0;\n  if (S.match(/RRR/)) {\n    answer = 3;\n  } else if (S.match(/RR/)) {\n    answer = 2;\n  } else if (S.match(/R/)) {\n    answer = 1;\n  }\n  console.log(answer);\n}\nMain(require(\"fs\").readFileSync(\"/dev/stdin\", \"utf8\"));\n",
+    "code2": "uses math;\nvar\n  n:string;\n  ma,i,s:longint;\nbegin\n  readln(n);\n  for i:=1 to length(n)+1 do if n[i]='R' then inc(s) else begin ma:=max(ma,s);s:=0;end;\n  writeln(ma);\nend.",
+    "label": 1
+  },
+  {
+    "code1": "function Main(input) {\n  \tconst str = input.split('\\n')[0]\n\tconsole.log(str[str.length - 1] === 's' ?  str+'es' : str+'s')\n}\n\nMain(require(\"fs\").readFileSync(\"/dev/stdin\", \"utf8\"));\n",
+    "code2": "var s:String;\nbegin\nreadln(s);\nwrite(s);\nif s[length(s)]='s' then writeln('es')else writeln('s');\nend.",
+    "label": 1
+  },
+  {
+    "code1": "const main=input=>{l=input.trim().split(\"\\n\");h=l[1].split(\" \").map(e=>parseInt(e));r=new Array(h.length).fill(true);l.slice(2).map(e => e.split(\" \").map(a => parseInt(a)-1)).map(e=>{a=h[e[0]],b=h[e[1]];(a==b?(r[e[0]]=r[e[1]]=!1):a<b?(r[e[0]]=!1):(r[e[1]]=!1))});return r.filter(e=>e).length};console.log(main(require('fs').readFileSync('/dev/stdin', 'utf8')))",
+    "code2": "var\n\tn,b,i:int64;\n    a:Array[1..200000] of int64;\nbegin\n\tread(n);\n    for i:=1 to n do begin\n    \tread(a[i]);\n        b:=b xor a[i];\n    end;\n    for i:=1 to n do begin\n    \twriteln(b xor a[i]);\n    end;\nend.",
+    "label": 0
+  },
+  {
+    "code1": "const main = (stdin) => {\n    const input = Number(stdin)\n    const a = input % 1000\n    console.log(a > 0 ? 1000 - a : 0)\n}\n \nmain(require(\"fs\").readFileSync(\"/dev/stdin\", \"utf8\"));",
+    "code2": "program main;\nvar n,a : integer;\nbegin\n\treadln(n);\n    a := 1000;\n    while (a < n) do begin\n    \ta := a + 1000;\n    end;    \n    writeln(a - n);\nend.",
+    "label": 1
+  },
+  {
+    "code1": "const main = (input) => {\n  const [_a, _b] = input.trim().split(' ')\n  const a = BigInt(_a)\n  const b = BigInt(_b.split('.').join(''))\n\n  return console.log(`${a*b / 100n}`)\n}\n\nprocess.env.MYTEST\n  ? (process.env.MYTEST === 'test' ? test() : main(require('fs').readFileSync('dev/stdin', 'utf8')))\n  : main(require('fs').readFileSync('/dev/stdin', 'utf8'))",
+    "code2": "program main;\nvar\n    a, b, c, d, sum : int64;\nbegin\n    sum := 0;\n    readln(a, b, c, d);\n    if d < a \n        then sum := sum + d\n        else begin\n            sum := sum + a;\n            d := d - a -b;\n            if d > 0\n                then sum := sum - d;\n        end;\n    writeln(sum);\nend.",
+    "label": 0
+  },
+  {
+    "code1": "const input = require(\"fs\").readFileSync(\"/dev/stdin\", \"utf8\")\nlet cin = input.split(/ |\\n/), cid = 0\nconst next = () => cin[cid++]\nconst nexts = (n) => cin.slice(cid, cid+=n).map(i=>parseInt(i))\n\nconst [H1, M1, H2, M2, K] = nexts(5);\nconst time = H2 * 60 + M2 - (H1 * 60 + M1) - K\ntime > 0 ? console.log(time) : console.log(0)\n",
+    "code2": "program main;\nvar c : char;\nbegin\n\treadln(c);\n    if(ord(c) >= 65) and (ord(c) <= 90) then\n    \twriteln('A')\n        else if(ord(c) >= 97) and (ord(c) <= 122) then\n        \twriteln('a');\nend.",
+    "label": 0
+  },
+  {
+    "code1": "function Main(input) {\n  \tinput = input.split(\"\\n\")  \n\tinput = input.map(x => x.split(\" \"))\n  \tlet output = 0\n    const D = input[0][1]\n  \t\n  \tfor(let i=1;i<=input[0][0];i++){\n    \tif(Math.sqrt(input[i][0]*input[i][0]+input[i][1]*input[i][1]) <= D){\n        \toutput++   \n        }\n    }\n  \n    console.log(output)\n}\nMain(require(\"fs\").readFileSync(\"/dev/stdin\", \"utf8\"));",
+    "code2": "var\n        a,b:array[0..200005] of int64;\n        i:longint;\n        n,h,res:int64;\n        check:real;\nbegin\n        read(n,h);\n        res:=0;\n        for i:=1 to n do read(a[i],b[i]);\n        for i:=1 to n do\n        begin\n                check:=0;\n                check:=sqrt(sqr(a[i])+sqr(b[i]));\n                if check<=h then inc(res);\n        end;\n        write(res);\nend.\n",
+    "label": 1
+  },
+  {
+    "code1": "while(True):\n      x = input(\"What is your age? \")\n      print(x)",
+    "code2": "$ sudo apt-get install open-cobol",
+    "label": 0
+  },
+  {
+    "code1": "foo = object()  # Create (instantiate) an empty object\naddress = id(foo)",
+    "code2": "data division.\nworking-storage section.\n01 ptr usage pointer.\n01 var pic x(64).\n\u00a0\nprocedure division.\nset ptr to address of var.",
+    "label": 1
+  },
+  {
+    "code1": "class Animal:\n  pass #functions go here...\n\u00a0\nclass Dog(Animal):\n  pass #functions go here...\n\u00a0\nclass Cat(Animal):\n  pass #functions go here...\n\u00a0\nclass Lab(Dog):\n  pass #functions go here...\n\u00a0\nclass Collie(Dog):\n  pass #functions go here...",
+    "code2": "DIVIDE foo BY bar GIVING foobar\n    ON SIZE ERROR\n        DISPLAY \"Division by zero detected!\"\nEND-DIVIDE",
+    "label": 0
+  },
+  {
+    "code1": ">>> def maprange( a, b, s):\n\t(a1, a2), (b1, b2) = a, b\n\treturn  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))\n\u00a0\n>>> for s in range(11):\n\tprint(\"%2g maps to\u00a0%g\"\u00a0% (s, maprange( (0, 10), (-1, 0), s)))\n\u00a0\n\u00a0\n 0 maps to -1\n 1 maps to -0.9\n 2 maps to -0.8\n 3 maps to -0.7\n 4 maps to -0.6\n 5 maps to -0.5\n 6 maps to -0.4\n 7 maps to -0.3\n 8 maps to -0.2\n 9 maps to -0.1\n10 maps to 0",
+    "code2": "DISPLAY SPACE WITH BELL",
+    "label": 0
+  },
+  {
+    "code1": "next = str(int('123') + 1)",
+    "code2": "       PROGRAM-ID. increment-num-str.\n\u00a0\n       DATA DIVISION.\n       WORKING-STORAGE SECTION.\n       01  str                    PIC X(5) VALUE \"12345\".\n       01  num                    REDEFINES str PIC 9(5).\n\u00a0\n       PROCEDURE DIVISION.\n           DISPLAY str\n           ADD 1 TO num\n           DISPLAY str\n\u00a0\n           GOBACK\n           .",
+    "label": 1
+  },
+  {
+    "code1": ">>> print('hello world')",
+    "code2": "$ sudo apt-get install open-cobol",
+    "label": 1
+  },
+  {
+    "code1": "out, max_out, max_times = 0, -1, []\nfor job in open('mlijobs.txt'):\n    out += 1 if \"OUT\" in job else -1\n    if out > max_out:\n        max_out, max_times = out, []\n    if out == max_out:\n        max_times.append(job.split()[3])\n\u00a0\nprint(\"Maximum simultaneous license use is\u00a0%i at the following times:\"\u00a0% max_out)\nprint('  ' + '\\n  '.join(max_times))",
+    "code2": "       PROGRAM-ID. Go-To-Example.\n\u00a0\n       PROCEDURE DIVISION.\n       Foo.\n           DISPLAY \"Just a reminder: GO TOs are evil.\"\n\u00a0\n           GO TO Foo\n           .",
+    "label": 0
+  },
+  {
+    "code1": "while(True):\n      x = input(\"What is your age? \")\n      print(x)",
+    "code2": "prompt$ cobc -x -cb_conf=acucobol-literals:ok\n",
+    "label": 0
+  },
+  {
+    "code1": "import math\nmath.factorial(n)",
+    "code2": "MOVE FUNCTION FACTORIAL(num) TO result",
+    "label": 1
+  },
+  {
+    "code1": "\u00a0\n# these examples, respectively, refer to integer, float, boolean, and string objects\nexample1 = 3\nexample2 = 3.0\nexample3 = True\nexample4 = \"hello\"\n\u00a0\n# example1 now refers to a string object.\nexample1 = \"goodbye\"\n\u00a0",
+    "code2": "MOVE 5 TO x\nMOVE FUNCTION SOME-FUNC(x) TO y\nMOVE \"foo\" TO z\nMOVE \"values 1234\" TO group-item\nSET some-index TO 5",
+    "label": 1
+  },
+  {
+    "code1": "while 1:\n   print \"SPAM\"",
+    "code2": "       IDENTIFICATION DIVISION.\n       PROGRAM-ID. Spam.\n\u00a0\n       PROCEDURE DIVISION.\n           PERFORM UNTIL 1 <> 1\n               DISPLAY \"SPAM\"\n           END-PERFORM\n\u00a0\n           GOBACK\n           .",
+    "label": 1
+  },
+  {
+    "code1": ">>> def maprange( a, b, s):\n\t(a1, a2), (b1, b2) = a, b\n\treturn  b1 + ((s - a1) * (b2 - b1) / (a2 - a1))\n\u00a0\n>>> for s in range(11):\n\tprint(\"%2g maps to\u00a0%g\"\u00a0% (s, maprange( (0, 10), (-1, 0), s)))\n\u00a0\n\u00a0\n 0 maps to -1\n 1 maps to -0.9\n 2 maps to -0.8\n 3 maps to -0.7\n 4 maps to -0.6\n 5 maps to -0.5\n 6 maps to -0.4\n 7 maps to -0.3\n 8 maps to -0.2\n 9 maps to -0.1\n10 maps to 0",
+    "code2": "data division.\nworking-storage section.\n01 ptr usage pointer.\n01 var pic x(64).\n\u00a0\nprocedure division.\nset ptr to address of var.",
+    "label": 0
+  },
+  {
+    "code1": ">>> # Bin(leading 0b or 0B), Oct(leading 0o or 0O), Dec, Hex(leading 0x or 0X), in order:\n>>> 0b1011010111 == 0o1327 == 727 == 0x2d7\nTrue\n>>>",
+    "code2": "prompt$ cobc -x -cb_conf=acucobol-literals:ok\n",
+    "label": 1
+  },
+  {
+    "code1": "def div_check(x, y):\n  try:\n    x / y\n  except ZeroDivisionError:\n    return True\n  else:\n    return False",
+    "code2": "DIVIDE foo BY bar GIVING foobar\n    ON SIZE ERROR\n        DISPLAY \"Division by zero detected!\"\nEND-DIVIDE",
+    "label": 1
+  },
+  {
+    "code1": "import shutil\nshutil.copyfile('input.txt', 'output.txt')",
+    "code2": "     $set ans85 flag\"ans85\" flagas\"s\" sequential\"line\"\n",
+    "label": 1
+  },
+  {
+    "code1": "array = []\n\u00a0\narray.append(1)\narray.append(3)\n\u00a0\narray[0] = 2\n\u00a0\nprint array[0]",
+    "code2": "DISPLAY \"'\" FUNCTION TRIM(str, LEADING) \"'\"\nDISPLAY \"'\" FUNCTION TRIM(str, TRAILING) \"'\"\nDISPLAY \"'\" FUNCTION TRIM(str) \"'\"",
+    "label": 0
+  },
+  {
+    "code1": "print \"\\a\"",
+    "code2": "DISPLAY SPACE WITH BELL",
+    "label": 1
+  },
+  {
+    "code1": ">>> s = ' \\t \\r \\n String with spaces  \\t  \\r  \\n  '\n>>> s\n' \\t \\r \\n String with spaces  \\t  \\r  \\n  '\n>>> s.lstrip()\n'String with spaces  \\t  \\r  \\n  '\n>>> s.rstrip()\n' \\t \\r \\n String with spaces'\n>>> s.strip()\n'String with spaces'\n>>> ",
+    "code2": "DISPLAY \"'\" FUNCTION TRIM(str, LEADING) \"'\"\nDISPLAY \"'\" FUNCTION TRIM(str, TRAILING) \"'\"\nDISPLAY \"'\" FUNCTION TRIM(str) \"'\"",
+    "label": 1
+  },
+  {
+    "code1": "array = []\n\u00a0\narray.append(1)\narray.append(3)\n\u00a0\narray[0] = 2\n\u00a0\nprint array[0]",
+    "code2": "       IDENTIFICATION DIVISION.\n       PROGRAM-ID. Spam.\n\u00a0\n       PROCEDURE DIVISION.\n           PERFORM UNTIL 1 <> 1\n               DISPLAY \"SPAM\"\n           END-PERFORM\n\u00a0\n           GOBACK\n           .",
+    "label": 0
+  },
+  {
+    "code1": "s1 = \"hello\"\nprint s1 + \" world\"\n\u00a0\ns2 = s1 + \" world\"\nprint s2",
+    "code2": "       IDENTIFICATION DIVISION.\n       PROGRAM-ID. Concat.\n\u00a0\n       DATA DIVISION.\n       WORKING-STORAGE SECTION.\n       01  Str  PIC X(7) VALUE \"Hello, \".\n       01  Str2 PIC X(15).\n\u00a0\n       PROCEDURE DIVISION.\n           DISPLAY \"Str \u00a0: \" Str\n           STRING Str \" World!\" DELIMITED BY SIZE INTO Str2\n           DISPLAY \"Str2\u00a0: \" Str2\n\u00a0\n           GOBACK\n           .",
+    "label": 1
+  },
+  {
+    "code1": "\u00a0\n#!/bin/python3\nfrom itertools import zip_longest\n\u00a0\n# This is wrong, it works only on specific examples\ndef beadsort(l):\n    return list(map(sum, zip_longest(*[[1] * e for e in l], fillvalue=0)))\n\u00a0\n\u00a0\n# Demonstration code:\nprint(beadsort([5,3,1,7,4,1,1]))\n\u00a0",
+    "code2": "MOVE FUNCTION FACTORIAL(num) TO result",
+    "label": 0
+  },
+  {
+    "code1": "python -c '\nwith open(\"data.txt\") as f:\n    for ln in f:\n        if float(ln.strip().split()[2]) > 6:\n            print(ln.strip())'",
+    "code2": "       PROGRAM-ID. Go-To-Example.\n\u00a0\n       PROCEDURE DIVISION.\n       Foo.\n           DISPLAY \"Just a reminder: GO TOs are evil.\"\n\u00a0\n           GO TO Foo\n           .",
+    "label": 0
+  },
+  {
+    "code1": ">>> data = [1, 4, 5, 3, -6, 3, 7, 10, -2, -5, 7, 5, 9, -3, 7]\n>>> def stoogesort(L, i=0, j=None):\n\tif j is None:\n\t\tj = len(L) - 1\n\tif L[j] < L[i]:\n\t\tL[i], L[j] = L[j], L[i]\n\tif j - i > 1:\n\t\tt = (j - i + 1) // 3\n\t\tstoogesort(L, i  , j-t)\n\t\tstoogesort(L, i+t, j  )\n\t\tstoogesort(L, i  , j-t)\n\treturn L\n\u00a0\n>>> stoogesort(data)\n[-6, -5, -3, -2, 1, 3, 3, 4, 5, 5, 7, 7, 7, 9, 10]",
+    "code2": "prompt$ cobc -x -cb_conf=acucobol-literals:ok\n",
+    "label": 0
+  },
+  {
+    "code1": "import os\nos.environ['HOME']",
+    "code2": "       IF FUNCTION REM(Num, 2) = 0\n           DISPLAY Num \" is even.\"\n       ELSE\n           DISPLAY Num \" is odd.\"\n       END-IF",
+    "label": 0
+  },
+  {
+    "code1": ">>> # Bin(leading 0b or 0B), Oct(leading 0o or 0O), Dec, Hex(leading 0x or 0X), in order:\n>>> 0b1011010111 == 0o1327 == 727 == 0x2d7\nTrue\n>>>",
+    "code2": "if condition-1\n    imperative-statement-1\nelse\n    imperative-statement-2\nend-if\n\u00a0\nif condition-1\n    if condition-a\n        imperative-statement-1a\n    else\n        imperative-statement-1\n    end-if\nelse\n    if condition-a\n        imperative-statement-2a\n    else\n        imperative-statement-2\n    end-if\nend-if",
+    "label": 0
+  },
+  {
+    "code1": "\u00a0\n#!/bin/python3\nfrom itertools import zip_longest\n\u00a0\n# This is wrong, it works only on specific examples\ndef beadsort(l):\n    return list(map(sum, zip_longest(*[[1] * e for e in l], fillvalue=0)))\n\u00a0\n\u00a0\n# Demonstration code:\nprint(beadsort([5,3,1,7,4,1,1]))\n\u00a0",
+    "code2": "     $set ans85 flag\"ans85\" flagas\"s\" sequential\"line\"\n",
+    "label": 0
+  },
+  {
+    "code1": "import mymodule",
+    "code2": "COPY \"copy.cpy\". *> The full stop is mandatory, wherever the COPY is.\nCOPY \"another-copy.cpy\" REPLACING foo BY bar\n                                  SPACE BY ZERO\n                                  ==text to replace== BY ==replacement text==.",
+    "label": 1
+  },
+  {
+    "code1": "# Search for an odd factor of a using brute force:\nfor i in range(n):\n    if (n%2) == 0:\n        continue\n    if (n%i) == 0:\n        result = i\n        break\nelse:\n    result = None\n    print \"No odd factors found\"",
+    "code2": "       PROGRAM-ID. Go-To-Example.\n\u00a0\n       PROCEDURE DIVISION.\n       Foo.\n           DISPLAY \"Just a reminder: GO TOs are evil.\"\n\u00a0\n           GO TO Foo\n           .",
+    "label": 1
+  },
+  {
+    "code1": "if x == 0:\n    foo()\nelif x == 1:\n    bar()\nelif x == 2:\n    baz()\nelse:\n    boz()",
+    "code2": "if condition-1\n    imperative-statement-1\nelse\n    imperative-statement-2\nend-if\n\u00a0\nif condition-1\n    if condition-a\n        imperative-statement-1a\n    else\n        imperative-statement-1\n    end-if\nelse\n    if condition-a\n        imperative-statement-2a\n    else\n        imperative-statement-2\n    end-if\nend-if",
+    "label": 1
+  },
+  {
+    "code1": "import sys\nfor i in xrange(5):\n    for j in xrange(i+1):\n        sys.stdout.write(\"*\")\n    print",
+    "code2": "\"This is a valid string.\"\n'As is this.'",
+    "label": 0
+  },
+  {
+    "code1": "while 1:\n   print \"SPAM\"",
+    "code2": "       PROGRAM-ID. Go-To-Example.\n\u00a0\n       PROCEDURE DIVISION.\n       Foo.\n           DISPLAY \"Just a reminder: GO TOs are evil.\"\n\u00a0\n           GO TO Foo\n           .",
+    "label": 0
+  },
+  {
+    "code1": "'c' == \"c\" # character\n'text' == \"text\"\n' \" '\n\" ' \"\n'\\x20' == ' '\nu'unicode string'\nu'\\u05d0' # unicode literal",
+    "code2": "\"This is a valid string.\"\n'As is this.'",
+    "label": 1
+  },
+  {
+    "code1": "enum Fruits{\n   APPLE, BANANA, CHERRY\n}",
+    "code2": "enum, bind(c)\n  enumerator :: one=1, two, three, four, five\n  enumerator :: six, seven, nine=9\nend enum",
+    "label": 1
+  },
+  {
+    "code1": "public class SumSquares\n{\n public static void main(final String[] args)\n {\n  double sum = 0;\n  int[] nums = {1,2,3,4,5};\n  for (int i\u00a0: nums)\n   sum += i * i;\n  System.out.println(\"The sum of the squares is: \" + sum);\n }\n}",
+    "code2": "   integer :: i\n   character(len=1) :: c(20)\n   equivalence (c, i)\n\u00a0\n   WRITE(*,*) bit_size(1)  ! number of bits in the default integer type\n                           ! which may (or may not!) equal the word size\n   i = 1\n\u00a0\n   IF (ichar(c(1)) == 0) THEN\n      WRITE(*,*) \"Big Endian\"\n   ELSE\n     WRITE(*,*) \"Little Endian\"\n   END IF",
+    "label": 0
+  },
+  {
+    "code1": "class Pair<T> {\n    T first;\n    T second;\n}\npublic static <T> void swap(Pair<T> p) {\n   T temp = p.first;\n   p.first = p.second;\n   p.second = temp;\n}",
+    "code2": "      DO I = FIRST,LAST\n        IF (PROGRESSNOTE((I - FIRST)/(LAST - FIRST + 1.0))) WRITE (6,*) \"Reached \",I,\", towards \",LAST\n        ...much computation...\n      END DO",
+    "label": 0
+  },
+  {
+    "code1": "public class Class1 extends Class2\n{\n\t//code here\n}",
+    "code2": "include ''char-literal-constant''",
+    "label": 1
+  },
+  {
+    "code1": "int[] array = new int[10]; //optionally, replace \"new int[10]\" with a braced list of ints like \"{1, 2, 3}\"\narray[0] = 42;\nSystem.out.println(array[3]);",
+    "code2": "program Example\n  implicit none\n\u00a0\n  character(8) :: dog, Dog, DOG\n\u00a0\n  dog = \"Benjamin\"\n  Dog = \"Samba\"\n  DOG = \"Bernie\"\n\u00a0\n  if (dog == DOG) then\n    write(*,*) \"There is just one dog named \", dog\n  else\n    write(*,*) \"The three dogs are named \", dog, Dog, \" and \", DOG\n  end if\n\u00a0\nend program Example",
+    "label": 0
+  },
+  {
+    "code1": "import java.util.Arrays;\n\u00a0\npublic class Example {\n    public static void main(String[] args)\n    {\n        int[] nums = {2,4,3,1,2};\n        Arrays.sort(nums);\n    }\n}",
+    "code2": "CALL ISORT@(b, a, n)\n! n = number of elements\n! a = array to be sorted\n! b = array of indices of a. b(1) 'points' to the minimum value etc.",
+    "label": 1
+  },
+  {
+    "code1": "jq -n 'pow(pow(5;3);2)'\n15625",
+    "code2": "write(*, \"(a, i0)\") \"5**3**2   = \", 5**3**2\nwrite(*, \"(a, i0)\") \"(5**3)**2 = \", (5**3)**2\nwrite(*, \"(a, i0)\") \"5**(3**2) = \", 5**(3**2)",
+    "label": 1
+  },
+  {
+    "code1": "import java.io.File;\n\u00a0\npublic class FileSize\n{\n    public static void main ( String[] args )\n    {\n        System.out.println(\"input.txt \u00a0: \" + new File(\"input.txt\").length() + \" bytes\");\n        System.out.println(\"/input.txt\u00a0: \" + new File(\"/input.txt\").length() + \" bytes\");\n    }\n}\n\u00a0",
+    "code2": "type scimage\n   integer, dimension(:,:), pointer :: channel\n   integer :: width, height\nend type scimage",
+    "label": 0
+  },
+  {
+    "code1": "public class SumProd\n{\n public static void main(final String[] args)\n {\n  int sum = 0;\n  int prod = 1;\n  int[] arg = {1,2,3,4,5};\n  for (int i\u00a0: arg)\n  {\n   sum += i;\n   prod *= i;\n  }\n }\n}",
+    "code2": "integer, dimension(10) :: a = (/ (i, i=1, 10) /)\ninteger :: sresult, presult\n\u00a0\nsresult = sum(a)\npresult = product(a)",
+    "label": 1
+  },
+  {
+    "code1": "int[] array = {1, 2, 3, 4, 5 };\nList<Integer> evensList = new ArrayList<Integer>();\nfor (int  i: array) {\n    if (i % 2 == 0) evensList.add(i);\n}\nint[] evens = evensList.toArray(new int[0]);",
+    "code2": "      INTEGER*4 I,TEXT(66)\n      DATA TEXT(1),TEXT(2),TEXT(3)/\"Wo\",\"rl\",\"d!\"/\n\u00a0\n      WRITE (6,1) (TEXT(I), I = 1,3)\n    1 FORMAT (\"Hello \",66A2)\n\u00a0\n      DO 2 I = 1,3\n    2   TEXT(I + 3) = TEXT(I)\n      TEXT(1) = \"He\"\n      TEXT(2) = \"ll\"\n      TEXT(3) = \"o \"\n\u00a0\n      WRITE (6,3) (TEXT(I), I = 1,6)\n    3 FORMAT (66A2)\n      END",
+    "label": 0
+  },
+  {
+    "code1": "String s = \"12345\";\ns = String.valueOf(Integer.parseInt(s) + 1);",
+    "code2": "CHARACTER(10)\u00a0:: intstr = \"12345\", realstr = \"1234.5\"\nINTEGER :: i\nREAL :: r\n\u00a0\nREAD(intstr, \"(I10)\") i        ! Read numeric string into integer i\ni = i + 1                      ! increment i\nWRITE(intstr, \"(I10)\") i       ! Write i back to string\n\u00a0\nREAD(realstr, \"(F10.1)\") r \t\nr = r + 1.0\t\t\t\t\nWRITE(realstr, \"(F10.1)\") r",
+    "label": 1
+  },
+  {
+    "code1": "(function(){print(\"(\"+arguments.callee.toString().replace(/\\s/g,'')+\")()\");})()",
+    "code2": "character*46::s='(\"character*46::s=\",3a,\";print s,39,s,39;end\")';print s,39,s,39;end",
+    "label": 1
+  },
+  {
+    "code1": "import java.util.stream.Stream;\n\u00a0\npublic class ReduceTask {\n\u00a0\n    public static void main(String[] args) {\n        System.out.println(Stream.of(1, 2, 3, 4, 5).mapToInt(i -> i).sum());\n        System.out.println(Stream.of(1, 2, 3, 4, 5).reduce(1, (a, b) -> a * b));\n    }\n}",
+    "code2": "LOCZ = MINLOC(BOARD)\t!Find the zero. 0 = BOARD(LOCZ(1),LOCZ(2)) == BOARD(ZC,ZR)",
+    "label": 0
+  },
+  {
+    "code1": "$ echo 'public class X{public static void main(String[]args){' \\\n>     'System.out.println(\"Hello Java!\");}}' >X.java\n$ javac X.java && java X",
+    "code2": "\u00a0\n$ gawk 'BEGIN{print\"write(6,\\\"(2(g12.3,x))\\\")(i/10.0,besj1(i/10.0), i=0,1000)\\nend\";exit(0)}'|gfortran -ffree-form -x f95 - | gnuplot -p -e 'plot \"<./a.out\" t \"Bessel function of 1st kind\" w l'\n\u00a0",
+    "label": 1
+  },
+  {
+    "code1": "public class StackTracer {\n    public static void printStackTrace() {\n\tStackTraceElement[] elems = Thread.currentThread().getStackTrace();\n\u00a0\n\tSystem.out.println(\"Stack trace:\");\n\tfor (int i = elems.length-1, j = 2 ; i >= 3 ; i--, j+=2) {\n\t    System.out.printf(\"%\" + j + \"s%s.%s%n\", \"\",\n\t\t    elems[i].getClassName(), elems[i].getMethodName());\n\t}\n    }\n}",
+    "code2": "\u00a0\n! type declaration\ntype my_type\n contains\nprocedure, pass :: method1\nprocedure, pass, pointer :: method2\nend type my_type\n\u00a0\n! declare object of type my_type\ntype(my_type) :: mytype_object\n\u00a0\n!static call\n call mytype_object%method1() ! call method1 defined as subroutine\n!instance?\n mytype_object%method2() ! call method2 defined as function\n\u00a0\n\u00a0",
+    "label": 0
+  },
+  {
+    "code1": "public class StackTracer {\n    public static void printStackTrace() {\n\tStackTraceElement[] elems = Thread.currentThread().getStackTrace();\n\u00a0\n\tSystem.out.println(\"Stack trace:\");\n\tfor (int i = elems.length-1, j = 2 ; i >= 3 ; i--, j+=2) {\n\t    System.out.printf(\"%\" + j + \"s%s.%s%n\", \"\",\n\t\t    elems[i].getClassName(), elems[i].getMethodName());\n\t}\n    }\n}",
+    "code2": "Gnash: croak Life is troubled\nGoodbye, cruel world!\nRoutine XeqACard croaks: Life is troubled\n...from XeqACard Confronting croak Life is troubled\n...from Attack   some input\n...from Gnash    Gnash gnashing\nOmitted exit from level 3:XeqACard\nOmitted exit from level 2:Attack\n",
+    "label": 1
+  },
+  {
+    "code1": "  char a = 'a';  // prints as: a\n  String b = \"abc\";  // prints as: abc\n  char doubleQuote = '\"';  // prints as: \"\n  char singleQuote = '\\'';  // prints as: '\n  String singleQuotes = \"''\";  // prints as: ''\n  String doubleQuotes = \"\\\"\\\"\";  // prints as: \"\"",
+    "code2": "elemental function elemf(x)\n   real :: elemf, x\n   elemf = f(x)\nend function elemf",
+    "label": 0
+  },
+  {
+    "code1": "import java.util.stream.Stream;\n\u00a0\npublic class ReduceTask {\n\u00a0\n    public static void main(String[] args) {\n        System.out.println(Stream.of(1, 2, 3, 4, 5).mapToInt(i -> i).sum());\n        System.out.println(Stream.of(1, 2, 3, 4, 5).reduce(1, (a, b) -> a * b));\n    }\n}",
+    "code2": "      SUBROUTINE FOLD(t,F,i,ist,lst)\n       INTEGER t\n       BYNAME F\n        DO i = ist,lst\n          t = F\n        END DO\n      END SUBROUTINE FOLD      !Result in temp.\n\u00a0\n      temp = a(1); CALL FOLD(temp,temp*a(i),i,2,N)",
+    "label": 1
+  },
+  {
+    "code1": "public class StackTracer {\n    public static void printStackTrace() {\n\tStackTraceElement[] elems = Thread.currentThread().getStackTrace();\n\u00a0\n\tSystem.out.println(\"Stack trace:\");\n\tfor (int i = elems.length-1, j = 2 ; i >= 3 ; i--, j+=2) {\n\t    System.out.printf(\"%\" + j + \"s%s.%s%n\", \"\",\n\t\t    elems[i].getClassName(), elems[i].getMethodName());\n\t}\n    }\n}",
+    "code2": "enum, bind(c)\n  enumerator :: one=1, two, three, four, five\n  enumerator :: six, seven, nine=9\nend enum",
+    "label": 0
+  },
+  {
+    "code1": "import java.util.Scanner;\n\u00a0\npublic class Sum2 {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in); // Standard input\n        System.out.println(in.nextInt() + in.nextInt()); // Standard output\n    }\n}",
+    "code2": "C     FIBONACCI SEQUENCE - FORTRAN IV\n      NN=46\n      DO 1 I=0,NN\n    1 WRITE(*,300) I,IFIBO(I)\n  300 FORMAT(1X,I2,1X,I10)\n      END\nC\n      FUNCTION IFIBO(N)\n      IF(N) 9,1,2\n    1 IFN=0\n      GOTO 9\n    2 IF(N-1) 9,3,4\n    3 IFN=1\n      GOTO 9\n    4 IFNM1=0\n      IFN=1\n      DO 5 I=2,N\n      IFNM2=IFNM1\n      IFNM1=IFN\n    5 IFN=IFNM1+IFNM2\n    9 IFIBO=IFN\n      END",
+    "label": 0
+  },
+  {
+    "code1": "import java.util.Scanner;\n\u00a0\npublic class Sum2 {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in); // Standard input\n        System.out.println(in.nextInt() + in.nextInt()); // Standard output\n    }\n}",
+    "code2": "LOCZ = MINLOC(BOARD)\t!Find the zero. 0 = BOARD(LOCZ(1),LOCZ(2)) == BOARD(ZC,ZR)",
+    "label": 0
+  },
+  {
+    "code1": "\u00a0\npublic class RecursionTest {\n\u00a0\n    private static void recurse(int i) {\n        try {\n\t    recurse(i+1);\n\t} catch (StackOverflowError e) {\n\t    System.out.print(\"Recursion depth on this system is \" + i + \".\");\n\t}\n    }\n\u00a0\n    public static void main(String[] args) {\n        recurse(0);\n    }\n}\n\u00a0",
+    "code2": "program recursion_depth\n\u00a0\n  implicit none\n\u00a0\n  call recurse (1)\n\u00a0\ncontains\n\u00a0\n  recursive subroutine recurse (i)\n\u00a0\n    implicit none\n    integer, intent (in) :: i\n\u00a0\n    write (*, '(i0)') i\n    call recurse (i + 1)\n\u00a0\n  end subroutine recurse\n\u00a0\nend program recursion_depth",
+    "label": 1
+  },
+  {
+    "code1": "processNutritionFacts(new NutritionFacts.Builder(240, 8).calories(100).sodium(35).carbohydrate(27).build());",
+    "code2": "subroutine a_sub(arg1, arg2, arg3)\n  integer, intent(in) :: arg1, arg2\n  integer, intent(out), optional :: arg3\n  ! ...\nend subroutine a_sub",
+    "label": 1
+  },
+  {
+    "code1": "int[] array = {1, 2, 3, 4, 5 };\nList<Integer> evensList = new ArrayList<Integer>();\nfor (int  i: array) {\n    if (i % 2 == 0) evensList.add(i);\n}\nint[] evens = evensList.toArray(new int[0]);",
+    "code2": "module funcs\n  implicit none\ncontains\n  pure function iseven(x)\n    logical :: iseven\n    integer, intent(in) :: x\n    iseven = mod(x, 2) == 0\n  end function iseven\nend module funcs",
+    "label": 1
+  },
+  {
+    "code1": "public class JNIDemo\n{\n  static\n  {  System.loadLibrary(\"JNIDemo\");  }\n\u00a0\n  public static void main(String[] args)\n  {\n    System.out.println(callStrdup(\"Hello World!\"));\n  }\n\u00a0\n  private static native String callStrdup(String s);\n}",
+    "code2": "\u00a0\nprogram euler\n    use iso_fortran_env, only: output_unit, REAL64\n    implicit none\n\u00a0\n    integer, parameter              :: d=REAL64\n    real(kind=d), parameter         :: e=exp(1._d), pi=4._d*atan(1._d)\n    complex(kind=d), parameter      :: i=(0._d,1._d)\n\u00a0\n    write(output_unit,*) e**(pi*i) + 1\nend program euler\n\u00a0",
+    "label": 0
+  },
+  {
+    "code1": "import java.io.*;\n\u00a0\npublic class Test {\n\u00a0\n    public static void main(String[] args) throws IOException {\n        try (BufferedWriter bw = new BufferedWriter(new FileWriter(\"test.txt\"))) {\n            bw.write(\"abc\");\n        }\n    }\n}",
+    "code2": "LOGICAL :: file_exists\nINQUIRE(FILE=\"input.txt\", EXIST=file_exists)   ! file_exists will be TRUE if the file\n                                               ! exists and FALSE otherwise\nINQUIRE(FILE=\"/input.txt\", EXIST=file_exists)",
+    "label": 0
+  },
+  {
+    "code1": "import java.util.Scanner;\n\u00a0\npublic class Sum2 {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in); // Standard input\n        System.out.println(in.nextInt() + in.nextInt()); // Standard output\n    }\n}",
+    "code2": "program a_plus_b\n  implicit none\n  integer :: a,b\n  read (*, *) a, b\n  write (*, '(i0)') a + b\nend program a_plus_b",
+    "label": 1
+  },
+  {
+    "code1": "import java.util.function.*;\nimport java.util.stream.*;\n\u00a0\npublic class Jensen {\n    static double sum(int lo, int hi, IntToDoubleFunction f) {\n        return IntStream.rangeClosed(lo, hi).mapToDouble(f).sum();\n    }\n\u00a0\n    public static void main(String args[]) {\n        System.out.println(sum(1, 100, (i -> 1.0/i)));\n    }\n}\n\u00a0",
+    "code2": "      FUNCTION SUM(I,LO,HI,TERM)\n        SUM = 0\n        DO I = LO,HI\n          SUM = SUM + TERM\n        END DO\n      END FUNCTION SUM\n      WRITE (6,*) SUM(I,1,100,1.0/I)\n      END",
+    "label": 1
+  },
+  {
+    "code1": "int[] array = new int[10]; //optionally, replace \"new int[10]\" with a braced list of ints like \"{1, 2, 3}\"\narray[0] = 42;\nSystem.out.println(array[3]);",
+    "code2": "integer a (10)",
+    "label": 1
+  },
+  {
+    "code1": "enum Fruits{\n   APPLE, BANANA, CHERRY\n}",
+    "code2": "\u00a0\nprogram SystemTest\ninteger :: i\n call execute_command_line (\"ls\", exitstat=i)\nend program SystemTest\n\u00a0",
+    "label": 0
+  },
+  {
+    "code1": "public static void gnomeSort(int[] a)\n{\n  int i=1;\n  int j=2;\n\u00a0\n  while(i < a.length) {\n    if ( a[i-1] <= a[i] ) {\n      i = j; j++;\n    } else {\n      int tmp = a[i-1];\n      a[i-1] = a[i];\n      a[i--] = tmp;\n      i = (i==0) ? j++ : i;\n    }\n  }\n}",
+    "code2": "module funcs\n  implicit none\ncontains\n  pure function iseven(x)\n    logical :: iseven\n    integer, intent(in) :: x\n    iseven = mod(x, 2) == 0\n  end function iseven\nend module funcs",
+    "label": 0
+  },
+  {
+    "code1": "(function(){print(\"(\"+arguments.callee.toString().replace(/\\s/g,'')+\")()\");})()",
+    "code2": "module arrCallback\ncontains\n    elemental function cube( x )\n        implicit none\n        real :: cube\n        real, intent(in) :: x\n        cube = x * x * x\n    end function cube\nend module arrCallback",
+    "label": 0
+  },
+  {
+    "code1": "int[] array = new int[10]; //optionally, replace \"new int[10]\" with a braced list of ints like \"{1, 2, 3}\"\narray[0] = 42;\nSystem.out.println(array[3]);",
+    "code2": "sha256 rc.txt\n764FAF5C61AC315F1497F9DFA542713965B785E5CC2F707D6468D7D1124CDFCF rc.txt (12 bytes)",
+    "label": 0
+  },
+  {
+    "code1": "processNutritionFacts(new NutritionFacts.Builder(240, 8).calories(100).sodium(35).carbohydrate(27).build());",
+    "code2": "enum, bind(c)\n  enumerator :: one=1, two, three, four, five\n  enumerator :: six, seven, nine=9\nend enum",
+    "label": 0
+  },
+  {
+    "code1": "  char a = 'a';  // prints as: a\n  String b = \"abc\";  // prints as: abc\n  char doubleQuote = '\"';  // prints as: \"\n  char singleQuote = '\\'';  // prints as: '\n  String singleQuotes = \"''\";  // prints as: ''\n  String doubleQuotes = \"\\\"\\\"\";  // prints as: \"\"",
+    "code2": "F(N) = ((1 + SQRT(5))**N - (1 - SQRT(5))**N)/(SQRT(5)*2**N)",
+    "label": 0
+  },
+  {
+    "code1": "import java.io.*;\n\u00a0\npublic class Test {\n\u00a0\n    public static void main(String[] args) throws IOException {\n        try (BufferedWriter bw = new BufferedWriter(new FileWriter(\"test.txt\"))) {\n            bw.write(\"abc\");\n        }\n    }\n}",
+    "code2": "      OPEN (F,FILE=\"SomeFileName.txt\",STATUS=\"REPLACE\")\n      WRITE (F,*) \"Whatever you like.\"\n      WRITE (F) BIGARRAY",
+    "label": 1
+  },
+  {
+    "code1": "if(s.equals(\"Hello World\"))\n{\n    foo();\n}\nelse if(s.equals(\"Bye World\"))\n    bar();//{}'s optional for one-liners\nelse\n{\n    deusEx();\n}",
+    "code2": "if ( a .gt. 20.0 ) then\n   q = q + a**2\nelse if ( a .ge. 0.0 ) then\n   q = q + 2*a**3\nelse\n   q = q - a\nend if",
+    "label": 1
+  },
+  {
+    "code1": "// prepend\npublic class Prepend {\n    public static void main(String[] args) {\n        StringBuilder sb = new StringBuilder(\"world\");\n        sb.insert(0, \"Hello, \");\n        System.out.println(sb);\n    }\n}",
+    "code2": "      INTEGER*4 I,TEXT(66)\n      DATA TEXT(1),TEXT(2),TEXT(3)/\"Wo\",\"rl\",\"d!\"/\n\u00a0\n      WRITE (6,1) (TEXT(I), I = 1,3)\n    1 FORMAT (\"Hello \",66A2)\n\u00a0\n      DO 2 I = 1,3\n    2   TEXT(I + 3) = TEXT(I)\n      TEXT(1) = \"He\"\n      TEXT(2) = \"ll\"\n      TEXT(3) = \"o \"\n\u00a0\n      WRITE (6,3) (TEXT(I), I = 1,6)\n    3 FORMAT (66A2)\n      END",
+    "label": 1
+  },
+  {
+    "code1": "(function(){print(\"(\"+arguments.callee.toString().replace(/\\s/g,'')+\")()\");})()",
+    "code2": "\u00a0\n$ gawk 'BEGIN{print\"write(6,\\\"(2(g12.3,x))\\\")(i/10.0,besj1(i/10.0), i=0,1000)\\nend\";exit(0)}'|gfortran -ffree-form -x f95 - | gnuplot -p -e 'plot \"<./a.out\" t \"Bessel function of 1st kind\" w l'\n\u00a0",
+    "label": 0
+  },
+  {
+    "code1": "enum Fruits{\n   APPLE, BANANA, CHERRY\n}",
+    "code2": "\u00a0\nprogram SystemTest\ninteger :: i\n call execute_command_line (\"ls\", exitstat=i)\nend program SystemTest\n\u00a0",
+    "label": 0
+  },
+  {
+    "code1": "ClassWithStaticMethod.staticMethodName(argument1, argument2);//for methods with no arguments, use empty parentheses",
+    "code2": "\u00a0\n! type declaration\ntype my_type\n contains\nprocedure, pass :: method1\nprocedure, pass, pointer :: method2\nend type my_type\n\u00a0\n! declare object of type my_type\ntype(my_type) :: mytype_object\n\u00a0\n!static call\n call mytype_object%method1() ! call method1 defined as subroutine\n!instance?\n mytype_object%method2() ! call method2 defined as function\n\u00a0\n\u00a0",
+    "label": 1
+  },
+  {
+    "code1": "String csv = \"...\";\n// Use Collectors.joining(...) for streaming, otherwise StringJoiner\nStringBuilder html = new StringBuilder(\"<table>\\n\");\nCollector collector = Collectors.joining(\"</td><td>\", \"  <tr><td>\", \"</td></tr>\\n\");\nfor (String row : csv.split(\"\\n\") ) {\n    html.append(Arrays.stream(row.split(\",\")).collect(collector));\n}\nhtml.append(\"</table>\\n\");",
+    "code2": "program doors\n    implicit none\n    integer, allocatable :: door(:)\n    character(6), parameter :: s(0:1) = [character(6) :: \"closed\", \"open\"]\n    integer :: i, n\n\u00a0\n    print \"(A)\", \"Number of doors?\"\n    read *, n\n    allocate (door(n))\n    door = 1\n    do i = 1, n\n        door(i:n:i) = 1 - door(i:n:i)\n        print \"(A,G0,2A)\", \"door \", i, \" is \", s(door(i))\n    end do\nend program",
+    "label": 0
+  },
+  {
+    "code1": "  char a = 'a';  // prints as: a\n  String b = \"abc\";  // prints as: abc\n  char doubleQuote = '\"';  // prints as: \"\n  char singleQuote = '\\'';  // prints as: '\n  String singleQuotes = \"''\";  // prints as: ''\n  String doubleQuotes = \"\\\"\\\"\";  // prints as: \"\"",
+    "code2": "      DIMENSION ATWT(12)\n      PRINT 1\n    1 FORMAT (12HElement Name,F9.4)\n      DO 10 I = 1,12\n        READ  1,ATWT(I)\n   10   PRINT 1,ATWT(I)\n      END ",
+    "label": 1
+  },
+  {
+    "code1": "String dog = \"Benjamin\";\nString Dog = \"Samba\"; //in general, identifiers that start with capital letters are class names\nString DOG = \"Bernie\"; //in general, identifiers in all caps are constants\n//the conventions listed in comments here are not enforced by the language\nSystem.out.println(\"There are three dogs named \" + dog + \", \" + Dog + \", and \" + DOG + \"'\");",
+    "code2": "program Example\n  implicit none\n\u00a0\n  character(8) :: dog, Dog, DOG\n\u00a0\n  dog = \"Benjamin\"\n  Dog = \"Samba\"\n  DOG = \"Bernie\"\n\u00a0\n  if (dog == DOG) then\n    write(*,*) \"There is just one dog named \", dog\n  else\n    write(*,*) \"The three dogs are named \", dog, Dog, \" and \", DOG\n  end if\n\u00a0\nend program Example",
+    "label": 1
+  },
+  {
+    "code1": "public static long itFibN(int n)\n{\n if (n < 2)\n  return n;\n long ans = 0;\n long n1 = 0;\n long n2 = 1;\n for(n--; n > 0; n--)\n {\n  ans = n1 + n2;\n  n1 = n2;\n  n2 = ans;\n }\n return ans;\n}",
+    "code2": "C     FIBONACCI SEQUENCE - FORTRAN IV\n      NN=46\n      DO 1 I=0,NN\n    1 WRITE(*,300) I,IFIBO(I)\n  300 FORMAT(1X,I2,1X,I10)\n      END\nC\n      FUNCTION IFIBO(N)\n      IF(N) 9,1,2\n    1 IFN=0\n      GOTO 9\n    2 IF(N-1) 9,3,4\n    3 IFN=1\n      GOTO 9\n    4 IFNM1=0\n      IFN=1\n      DO 5 I=2,N\n      IFNM2=IFNM1\n      IFNM1=IFN\n    5 IFN=IFNM1+IFNM2\n    9 IFIBO=IFN\n      END",
+    "label": 1
+  },
+  {
+    "code1": "/* SHA-1 hash in Jsish */\nvar str = 'Rosetta code';\nputs(Util.hash(str, {type:'sha1'}));\n\u00a0\n/*\n=!EXPECTSTART!=\nb18c883f4da750164b5af362ea9b9f27f90904b4\n=!EXPECTEND!=\n*/",
+    "code2": "\u00a0\nPROGRAM CREATION\nOPEN (UNIT=5, FILE=\"output.txt\", STATUS=\"NEW\")   ! Current directory\nCLOSE (UNIT=5)\nOPEN (UNIT=5, FILE=\"/output.txt\", STATUS=\"NEW\")  ! Root directory\nCLOSE (UNIT=5)\n\u00a0\n!Directories (Use System from GNU Fortran Compiler)\n! -- Added by Anant Dixit, November 2014\ncall system(\"mkdir docs/\")\ncall system(\"mkdir ~/docs/\")\n\u00a0\nEND PROGRAM\n\u00a0",
+    "label": 0
+  },
+  {
+    "code1": "import java.io.*;\npublic class CreateFileTest {\n\tpublic static void main(String args[]) {\n\t\ttry {\n\t\t\tnew File(\"output.txt\").createNewFile();\n\t\t\tnew File(File.separator + \"output.txt\").createNewFile();\n\t\t\tnew File(\"docs\").mkdir();\n\t\t\tnew File(File.separator + \"docs\").mkdir();\n\t\t} catch (IOException e) {\n\t\t\tSystem.err.println(e.getMessage());\n\t\t}\n\t}\n}",
+    "code2": "\u00a0\nPROGRAM CREATION\nOPEN (UNIT=5, FILE=\"output.txt\", STATUS=\"NEW\")   ! Current directory\nCLOSE (UNIT=5)\nOPEN (UNIT=5, FILE=\"/output.txt\", STATUS=\"NEW\")  ! Root directory\nCLOSE (UNIT=5)\n\u00a0\n!Directories (Use System from GNU Fortran Compiler)\n! -- Added by Anant Dixit, November 2014\ncall system(\"mkdir docs/\")\ncall system(\"mkdir ~/docs/\")\n\u00a0\nEND PROGRAM\n\u00a0",
+    "label": 1
+  },
+  {
+    "code1": "\u00a0\nconst crypto = require('crypto');\n\u00a0\nconst msg = 'Rosetta code';\nconst hash = crypto.createHash('sha256').update(msg).digest('hex');\n\u00a0\nconsole.log(hash);\n\u00a0",
+    "code2": "sha256 rc.txt\n764FAF5C61AC315F1497F9DFA542713965B785E5CC2F707D6468D7D1124CDFCF rc.txt (12 bytes)",
+    "label": 1
+  },
+  {
+    "code1": "\u00a0\npublic class RecursionTest {\n\u00a0\n    private static void recurse(int i) {\n        try {\n\t    recurse(i+1);\n\t} catch (StackOverflowError e) {\n\t    System.out.print(\"Recursion depth on this system is \" + i + \".\");\n\t}\n    }\n\u00a0\n    public static void main(String[] args) {\n        recurse(0);\n    }\n}\n\u00a0",
+    "code2": "sha256 rc.txt\n764FAF5C61AC315F1497F9DFA542713965B785E5CC2F707D6468D7D1124CDFCF rc.txt (12 bytes)",
+    "label": 0
+  },
+  {
+    "code1": "import java.nio.ByteOrder;\n\u00a0\npublic class ShowByteOrder {\n    public static void main(String[] args) {\n        // Print \"BIG_ENDIAN\" or \"LITTLE_ENDIAN\".\n        System.out.println(ByteOrder.nativeOrder());\n    }\n}",
+    "code2": "   integer :: i\n   character(len=1) :: c(20)\n   equivalence (c, i)\n\u00a0\n   WRITE(*,*) bit_size(1)  ! number of bits in the default integer type\n                           ! which may (or may not!) equal the word size\n   i = 1\n\u00a0\n   IF (ichar(c(1)) == 0) THEN\n      WRITE(*,*) \"Big Endian\"\n   ELSE\n     WRITE(*,*) \"Little Endian\"\n   END IF",
+    "label": 1
+  },
+  {
+    "code1": "double infinity = Double.POSITIVE_INFINITY; //defined as 1.0/0.0\nDouble.isInfinite(infinity); //true",
+    "code2": "F(N) = ((1 + SQRT(5))**N - (1 - SQRT(5))**N)/(SQRT(5)*2**N)",
+    "label": 0
+  },
+  {
+    "code1": "$ echo 'public class X{public static void main(String[]args){' \\\n>     'System.out.println(\"Hello Java!\");}}' >X.java\n$ javac X.java && java X",
+    "code2": "module arrCallback\ncontains\n    elemental function cube( x )\n        implicit none\n        real :: cube\n        real, intent(in) :: x\n        cube = x * x * x\n    end function cube\nend module arrCallback",
+    "label": 0
+  },
+  {
+    "code1": "const myVar = 123;\nconst tempLit = `Here is some\nmulti-line string. And here is\nthe value of \"myVar\": ${myVar}\nThat's all.`;\nconsole.log(tempLit)\n",
+    "code2": "type\n\trange = 1..10;\nvar\n\tn: range;\nbegin\n\tn := 10;\n\t{$rangeChecks on}\n\tn := n + 10; // will yield a run-time error\nend;",
+    "label": 0
+  },
+  {
+    "code1": "function toBinary(number) {\n    return new Number(number)\n        .toString(2);\n}\nvar demoValues = [5, 50, 9000];\nfor (var i = 0; i < demoValues.length; ++i) {\n    // alert() in a browser, wscript.echo in WSH, etc.\n    print(toBinary(demoValues[i])); \n}",
+    "code2": "echo \"begin writeLn('Hi'); end.\" | ifpc /dev/stdin",
+    "label": 0
+  },
+  {
+    "code1": "var a = [1,2,3],\n    b = [4,5,6],\n    c = a.concat(b); //=> [1,2,3,4,5,6]",
+    "code2": " array2 := array0 + array1",
+    "label": 1
+  },
+  {
+    "code1": "function multiply(a, b) { \n  return a*b; \n}",
+    "code2": " array2 := array0 + array1",
+    "label": 0
+  },
+  {
+    "code1": "\u00a0\nvar mac = \"88:53:2E:67:07:BE\";\nfunction findmac(){\n\twindow.open(\"http://api.macvendors.com/\" + mac);\n}\n\u00a0\nfindmac();\n\u00a0",
+    "code2": "program MACVendorLookup;\n\u00a0\nuses\n  fphttpclient;\n\u00a0\nvar\n  res: String;\nbegin\n  if paramCount > 0 then begin\n\u00a0\n    With TFPHttpClient.Create(Nil) do\n    try\n      allowRedirect := true;\n      try\n        res := Get('http://api.macvendors.com/' + ParamStr(1));\n        writeLn(res);\n      except\n        writeLn('N/A');\n      end;\n    finally\n      Free;\n    end;\n  end;\nend.",
+    "label": 1
+  },
+  {
+    "code1": "var doors=[];\nfor (var i=0;i<100;i++)\n    doors[i]=false;\nfor (var i=1;i<=100;i++)\n    for (var i2=i-1,g;i2<100;i2+=i)\n        doors[i2]=!doors[i2];\nfor (var i=1;i<=100;i++)\n    console.log(\"Door\u00a0%d is\u00a0%s\",i,doors[i-1]?\"open\":\"closed\")",
+    "code2": "\u00a0\ne\npi, \u03c0   // Unicode can also be written in ASCII programs as \\u03C0\nsqrt[x]\nln[x]   // Natural log\nlog[x]  // Log to base 10\nexp[x], e^x\nabs[x]\nfloor[x] // Except for complex numbers where there's no good interpretation.\nceil[x]  // Except for complex numbers where there's no good interpretation.\nx^y\n\u00a0",
+    "label": 0
+  },
+  {
+    "code1": "Math.E\nMath.PI\nMath.sqrt(x)\nMath.log(x)\nMath.exp(x)\nMath.abs(x)\nMath.floor(x)\nMath.ceil(x)\nMath.pow(x,y)",
+    "code2": "\u00a0\ne\npi, \u03c0   // Unicode can also be written in ASCII programs as \\u03C0\nsqrt[x]\nln[x]   // Natural log\nlog[x]  // Log to base 10\nexp[x], e^x\nabs[x]\nfloor[x] // Except for complex numbers where there's no good interpretation.\nceil[x]  // Except for complex numbers where there's no good interpretation.\nx^y\n\u00a0",
+    "label": 1
+  },
+  {
+    "code1": "$ js -e 'print(\"hello\")'\nhello",
+    "code2": "echo \"begin writeLn('Hi'); end.\" | ifpc /dev/stdin",
+    "label": 1
+  },
+  {
+    "code1": "var stack = [];\nstack.push(1)\nstack.push(2,3);\nprint(stack.pop());   // 3\nprint(stack.length);   // 2, stack empty if 0",
+    "code2": " array2 := array0 + array1",
+    "label": 0
+  },
+  {
+    "code1": "+\"0123459\"; // 123459\n+\"0xabcf123\"; // 180154659\n\u00a0\n// also supports negative numbers, but not for hex:\n+\"-0123459\"; // -123459\n+\"-0xabcf123\"; // NaN",
+    "code2": "\u00a0\nprogram readIntegers(input, output);\nvar\n\ti: aluSInt;\nbegin\n\twhile not EOF(input) do\n\tbegin\n\t\treadLn(i);\n\t\twriteLn(i:24);\n\tend;\nend.\n\u00a0",
+    "label": 1
+  },
+  {
+    "code1": "function toBinary(number) {\n    return new Number(number)\n        .toString(2);\n}\nvar demoValues = [5, 50, 9000];\nfor (var i = 0; i < demoValues.length; ++i) {\n    // alert() in a browser, wscript.echo in WSH, etc.\n    print(toBinary(demoValues[i])); \n}",
+    "code2": "' FB 1.05.0 Win64\n\u00a0\nDim a(0 To 9) As String = {\"Zero\", \"One\", \"Two\", \"Three\", \"Four\", \"Five\", \"Six\", \"Seven\", \"Eight\", \"Nine\"}\n\u00a0\nRandomize\nDim randInt As Integer \n\u00a0\nFor i As Integer = 1 To 5\n  randInt = Int(Rnd * 10)\n  Print a(randInt)\nNext\nSleep",
+    "label": 0
+  },
+  {
+    "code1": "function multiply(a, b) { \n  return a*b; \n}",
+    "code2": "program MACVendorLookup;\n\u00a0\nuses\n  fphttpclient;\n\u00a0\nvar\n  res: String;\nbegin\n  if paramCount > 0 then begin\n\u00a0\n    With TFPHttpClient.Create(Nil) do\n    try\n      allowRedirect := true;\n      try\n        res := Get('http://api.macvendors.com/' + ParamStr(1));\n        writeLn(res);\n      except\n        writeLn('N/A');\n      end;\n    finally\n      Free;\n    end;\n  end;\nend.",
+    "label": 0
+  },
+  {
+    "code1": "var array = [1,2,3];\nreturn array[Math.floor(Math.random() * array.length)];",
+    "code2": "' FB 1.05.0 Win64\n\u00a0\nDim a(0 To 9) As String = {\"Zero\", \"One\", \"Two\", \"Three\", \"Four\", \"Five\", \"Six\", \"Seven\", \"Eight\", \"Nine\"}\n\u00a0\nRandomize\nDim randInt As Integer \n\u00a0\nFor i As Integer = 1 To 5\n  randInt = Int(Rnd * 10)\n  Print a(randInt)\nNext\nSleep",
+    "label": 1
+  },
+  {
+    "code1": "function multiply(a, b) { \n  return a*b; \n}",
+    "code2": "function multiply(a, b: integer): integer;\nbegin\n  exit(a * b);\nend;",
+    "label": 1
+  }
+]
