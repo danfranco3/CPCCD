@@ -64,8 +64,10 @@ def finetune(model, train_dataset, val_dataset):
     for epoch in range(EPOCHS):
         model.train()
         total_loss = 0
+        
+        accumulation_steps = 16
 
-        for batch in tqdm(train_loader, desc=f"Epoch {epoch+1}"):
+        for i, batch in tqdm(enumerate(train_loader), desc=f"Epoch {epoch+1}"):
             input_ids = batch['input_ids'].to(device)
             attention_mask = batch['attention_mask'].to(device)
             labels = batch['labels'].to(device)
@@ -74,9 +76,11 @@ def finetune(model, train_dataset, val_dataset):
             loss = loss_fn(logits, labels)
 
             loss.backward()
-            optimizer.step()
-            scheduler.step()
-            optimizer.zero_grad()
+            
+            if (i + 1) % accumulation_steps == 0:
+                optimizer.step()      
+                scheduler.step()       
+                optimizer.zero_grad()
 
             total_loss += loss.item()
 
