@@ -163,59 +163,60 @@ def eval_one_shot(code_set, support_dataset, test_examples, model, tokenizer, ne
 def run():
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
 
+    train_path = "src/data/combined_train.json"
+    train_dataset = CodeCloneDataset(train_path, tokenizer, MAX_LENGTH)
+
+    train_size = int(len(train_dataset) * 0.8)
+    val_size = len(train_dataset) - train_size
+    train_dataset, val_dataset = random_split(train_dataset, [train_size, val_size], generator=torch.Generator().manual_seed(42))
+
+    model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME, trust_remote_code=True).to(device)
+    if torch.cuda.is_available():
+        model.gradient_checkpointing_enable()
+        
+    tokenizer, model = extend_tokenizer_and_resize_model(
+        model,
+        tokenizer,
+        custom_tokenizer_path="bpe_cobol_fortran_pascal.json"
+    )
+
+    data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, model=model, padding=True, return_tensors="pt")
+
+    training_args = Seq2SeqTrainingArguments(
+        output_dir=f"{OUTPUT_DIR}",
+        eval_strategy="epoch",
+        save_strategy="epoch",
+        learning_rate=5e-5,
+        per_device_train_batch_size=BATCH_SIZE,
+        per_device_eval_batch_size=BATCH_SIZE,
+        num_train_epochs=EPOCHS,
+        weight_decay=0.01,
+        eval_accumulation_steps=4,
+        gradient_accumulation_steps=16,
+        predict_with_generate=True,
+        logging_dir=f"{OUTPUT_DIR}/logs",
+        load_best_model_at_end=True,
+        fp16=use_fp16,
+        no_cuda=not torch.cuda.is_available(),
+    )
+
+    trainer = Seq2SeqTrainer(
+        model=model,
+        args=training_args,
+        train_dataset=train_dataset,
+        eval_dataset=val_dataset,
+        tokenizer=tokenizer,
+        data_collator=data_collator
+    )
+
+    trainer.train()
+    trainer.save_model(f"{OUTPUT_DIR}/codet5")
+
     for code_set in CLONE_DATASETS:
         print(f"\n=== Running for dataset: {code_set} ===")
-        train_path = "src/data/combined_train.json"
+        
         test_path = f"src/data/rosetta/{code_set}_test.json"
-
-        train_dataset = CodeCloneDataset(train_path, tokenizer, MAX_LENGTH)
         test_dataset = CodeCloneDataset(test_path, tokenizer, MAX_LENGTH)
-
-        train_size = int(len(train_dataset) * 0.8)
-        val_size = len(train_dataset) - train_size
-        train_dataset, val_dataset = random_split(train_dataset, [train_size, val_size], generator=torch.Generator().manual_seed(42))
-
-        model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME, trust_remote_code=True).to(device)
-        if torch.cuda.is_available():
-            model.gradient_checkpointing_enable()
-            
-        tokenizer, model = extend_tokenizer_and_resize_model(
-            model,
-            tokenizer,
-            custom_tokenizer_path="bpe_cobol_fortran_pascal.json"
-        )
-
-        data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, model=model, padding=True, return_tensors="pt")
-
-        training_args = Seq2SeqTrainingArguments(
-            output_dir=f"{OUTPUT_DIR}/{code_set}",
-            eval_strategy="epoch",
-            save_strategy="epoch",
-            learning_rate=5e-5,
-            per_device_train_batch_size=BATCH_SIZE,
-            per_device_eval_batch_size=BATCH_SIZE,
-            num_train_epochs=EPOCHS,
-            weight_decay=0.01,
-            eval_accumulation_steps=4,
-            gradient_accumulation_steps=16,
-            predict_with_generate=True,
-            logging_dir=f"{OUTPUT_DIR}/{code_set}/logs",
-            load_best_model_at_end=True,
-            fp16=use_fp16,
-            no_cuda=not torch.cuda.is_available(),
-        )
-
-        trainer = Seq2SeqTrainer(
-            model=model,
-            args=training_args,
-            train_dataset=train_dataset,
-            eval_dataset=val_dataset,
-            tokenizer=tokenizer,
-            data_collator=data_collator
-        )
-
-        trainer.train()
-        trainer.save_model(f"{OUTPUT_DIR}/{code_set}/codet5")
 
         with open(test_path) as f:
             test_examples = json.load(f)
