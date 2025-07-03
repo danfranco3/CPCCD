@@ -25,10 +25,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 use_fp16 = torch.cuda.is_available()
 
 def predict(prompt, model, tokenizer):
-    inputs = tokenizer(prompt, return_tensors="pt", truncation=True, padding=True, max_length=MAX_LENGTH)
-    input_token_count = inputs['input_ids'].shape[-1]
-    print(f"Input token count: {input_token_count}")
-    inputs = inputs.to(model.device)
+    inputs = tokenizer(prompt, return_tensors="pt", truncation=True, padding=True, max_length=MAX_LENGTH).to(model.device)
     outputs = model.generate(**inputs, max_new_tokens=10)
     return tokenizer.decode(outputs[0], skip_special_tokens=True).strip()
 
