@@ -13,8 +13,8 @@ from code_clone_pkg.utils import extend_tokenizer_and_resize_model
 MODEL_NAME = "Salesforce/codet5p-220m"
 OUTPUT_DIR = "results/finetune"
 MAX_LENGTH = 1024
-EPOCHS = 4
-BATCH_SIZE = 3
+EPOCHS = 8
+BATCH_SIZE = 2
 CLONE_DATASETS = [
     'python_cobol',
     'java_fortran',
@@ -197,6 +197,7 @@ def run():
             num_train_epochs=EPOCHS,
             weight_decay=0.01,
             eval_accumulation_steps=4,
+            gradient_accumulation_steps=16,
             predict_with_generate=True,
             logging_dir=f"{OUTPUT_DIR}/{code_set}/logs",
             load_best_model_at_end=True,

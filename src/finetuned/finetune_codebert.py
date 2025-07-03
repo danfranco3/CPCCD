@@ -16,8 +16,8 @@ from code_clone_pkg.dataset import CodeCloneDataset
 MODEL_NAME = "microsoft/codebert-base"
 OUTPUT_DIR = "results/codebert_finetune"
 MAX_LENGTH = 512
-EPOCHS = 5
-BATCH_SIZE = 3
+EPOCHS = 8
+BATCH_SIZE = 2
 LR = 2e-5
 THRESHOLD = 0.9
 CLONE_DATASETS = ['python_cobol', 'java_fortran', 'js_pascal']
@@ -27,13 +27,11 @@ class CodeBERTClassifier(nn.Module):
     def __init__(self, base_model_name):
         super().__init__()
         self.encoder = AutoModel.from_pretrained(base_model_name)
-        self.classifier = nn.Linear(self.encoder.config.hidden_size * 2, 2)
+        self.classifier = nn.Linear(self.encoder.config.hidden_size, 2)  # only one encoding now
 
-    def forward(self, code1_inputs, code2_inputs):
-        out1 = self.encoder(**code1_inputs).last_hidden_state[:, 0]
-        out2 = self.encoder(**code2_inputs).last_hidden_state[:, 0]
-        combined = torch.cat([out1, out2], dim=1)
-        logits = self.classifier(combined)
+    def forward(self, input_ids, attention_mask):
+        out = self.encoder(input_ids=input_ids, attention_mask=attention_mask).last_hidden_state[:, 0]
+        logits = self.classifier(out)
         return logits
 
 
@@ -52,7 +50,7 @@ def get_pair_embedding(code1, code2, tokenizer, model):
         return torch.cat([h1, h2], dim=-1)
 
 
-def finetune(model, tokenizer, train_dataset, val_dataset):
+def finetune(model, train_dataset, val_dataset):
     model.train()
     optimizer = AdamW(model.parameters(), lr=LR)
     num_training_steps = EPOCHS * len(train_dataset) // BATCH_SIZE
@@ -68,10 +66,11 @@ def finetune(model, tokenizer, train_dataset, val_dataset):
         total_loss = 0
 
         for batch in tqdm(train_loader, desc=f"Epoch {epoch+1}"):
-            code1_inputs, code2_inputs = tokenize_pair(tokenizer, batch['code1'], batch['code2'])
+            input_ids = batch['input_ids'].to(device)
+            attention_mask = batch['attention_mask'].to(device)
             labels = batch['labels'].to(device)
 
-            logits = model(code1_inputs, code2_inputs)
+            logits = model(input_ids, attention_mask)
             loss = loss_fn(logits, labels)
 
             loss.backward()
@@ -90,10 +89,11 @@ def finetune(model, tokenizer, train_dataset, val_dataset):
 
         with torch.no_grad():
             for batch in val_loader:
-                code1_inputs, code2_inputs = tokenize_pair(tokenizer, batch['code1'], batch['code2'])
+                input_ids = batch['input_ids'].to(device)
+                attention_mask = batch['attention_mask'].to(device)
                 labels = batch['labels'].to(device)
 
-                logits = model(code1_inputs, code2_inputs)
+                logits = model(input_ids, attention_mask)
                 loss = loss_fn(logits, labels)
                 val_loss += loss.item()
 
@@ -107,6 +107,7 @@ def finetune(model, tokenizer, train_dataset, val_dataset):
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     torch.save(model.state_dict(), os.path.join(OUTPUT_DIR, "codebert_finetuned.pt"))
+
 
 
 def evaluate_model_cosine(model, tokenizer, test_examples, output_path):
@@ -197,7 +198,7 @@ def run():
         val_size = len(train_dataset) - train_size
         train_data, val_data = random_split(train_dataset, [train_size, val_size])
 
-        finetune(model, tokenizer, train_data, val_data)
+        finetune(model, train_data, val_data)
 
         evaluate_model_cosine(model, tokenizer, test_examples, f"{OUTPUT_DIR}/{code_set}_zero_shot.json")
 
