@@ -16,7 +16,7 @@ from code_clone_pkg.dataset import CodeCloneDataset
 MODEL_NAME = "microsoft/codebert-base"
 OUTPUT_DIR = "results/codebert_finetune"
 MAX_LENGTH = 512
-EPOCHS = 10
+EPOCHS = 5
 BATCH_SIZE = 3
 LR = 2e-5
 THRESHOLD = 0.9

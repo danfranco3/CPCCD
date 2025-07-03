@@ -14,7 +14,7 @@ MODEL_NAME = "Salesforce/codet5p-220m"
 OUTPUT_DIR = "results/finetune"
 MAX_LENGTH = 1024
 EPOCHS = 4
-BATCH_SIZE = 5
+BATCH_SIZE = 3
 CLONE_DATASETS = [
     'python_cobol',
     'java_fortran',
