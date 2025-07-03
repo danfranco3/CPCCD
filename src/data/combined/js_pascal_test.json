@@ -1,0 +1,152 @@
+[
+  {
+    "code1": "process.stdin.resume();\nprocess.stdin.setEncoding('utf8');\n\nvar lines = [];\nvar reader = require('readline').createInterface({\n  input: process.stdin,\n  output: process.stdout\n});\nreader.on('line', (line) => {\n  lines.push(line);\n});\nreader.on('close', () => {\nconst n = Number(lines[0]);\nconst str = \"ACL\";\nconsole.log(str.repeat(n));\n});",
+    "code2": "var\n  n, i: integer;\nbegin\n  read(n);\n  for i:=1 to n do write('ACL');\nend.",
+    "label": 1
+  },
+  {
+    "code1": "function Main(input) {\n  \tconst str = input.split('\\n')[0]\n\tconsole.log(str[str.length - 1] === 's' ?  str+'es' : str+'s')\n}\n\nMain(require(\"fs\").readFileSync(\"/dev/stdin\", \"utf8\"));\n",
+    "code2": "var s:String;\nbegin\nreadln(s);\nwrite(s);\nif s[length(s)]='s' then writeln('es')else writeln('s');\nend.",
+    "label": 1
+  },
+  {
+    "code1": "const main = arg => {\n  const [d, t, s] = arg.split(' ').map(a => +a);\n  console.log(d / s <= t ? 'Yes' : 'No');\n};\nmain(require('fs').readFileSync('/dev/stdin', 'utf8'));",
+    "code2": "var\n d,t,s:double;\nbegin\n readln(d,t,s);\n if s*t>=d then write('Yes')\n  else write('No');\nend.",
+    "label": 1
+  },
+  {
+    "code1": "function Main(arg) {   \n    let [n,x,t]= arg.split(\" \").map(Number)\n    console.log(Math.ceil(n/x) * t)\n}\nMain(require(\"fs\").readFileSync(\"/dev/stdin\", \"utf8\"));",
+    "code2": "program bt;\n\nvar s:ansistring;\n    t,i:longint;\n \nbegin\n   readln(s);\n   t:=0;\n   for i:=1 to length(s) do t:=t+(ord(s[i])-48);\n   if (t mod 9=0) then write('Yes') else write('No');\n   readln;\nend.\n       \n       ",
+    "label": 0
+  },
+  {
+    "code1": "const main = arg => {\n  const [d, t, s] = arg.split(' ').map(a => +a);\n  console.log(d / s <= t ? 'Yes' : 'No');\n};\nmain(require('fs').readFileSync('/dev/stdin', 'utf8'));",
+    "code2": "program test;\n{$mode objfpc}{$H+}{$R+}{$S+}\nUses sysutils,math;\nvar\n\tN\t        :integer;\n\ta,b,ans     :integer;\nbegin\n    readln(N);\n    ans:=0;\n    for a:=1 to N do\n    begin\n        for b:=1 to (N div a) do\n        begin\n            if ((a*b)<N) then inc(ans);\n        end;\n    end;\n\n    writeln(stdout,ans);\nend.",
+    "label": 0
+  },
+  {
+    "code1": "const Main = (input) => {\n  num = Number(input);\n  console.log(num === 0 ? 1 : 0);\n}\n\nMain(require(\"fs\").readFileSync(\"/dev/stdin\", \"utf8\"));\n// Main(`0`);\n",
+    "code2": "var a,b,c,d,ll,lr,rl,rr,tmp:int64;\nbegin\nreadln(a,b,c,d);\nll:=a*c;\nrl:=b*c;\nlr:=a*d;\nrr:=b*d;\ntmp:=-1000000000 * 1000000000;\nif(ll>=tmp)then tmp:=ll;\nif(rl>=tmp)then tmp:=rl;\nif(lr>=tmp)then tmp:=lr;\nif(rr>=tmp)then tmp:=rr;\nwriteln(tmp);\nend.",
+    "label": 0
+  },
+  {
+    "code1": "process.stdin.resume();\nprocess.stdin.setEncoding('utf8');\n\nvar lines = [];\nvar reader = require('readline').createInterface({\n  input: process.stdin,\n  output: process.stdout\n});\nreader.on('line', (line) => {\n  lines.push(line);\n});\nreader.on('close', () => {\nconst n = Number(lines[0]);\nconst str = \"ACL\";\nconsole.log(str.repeat(n));\n});",
+    "code2": "var i:integer;\nbegin\nreadln(i);\nwriteln(1-i);\nend.",
+    "label": 0
+  },
+  {
+    "code1": "function Main(input) {\n  \tconst str = input.split('\\n')[0]\n\tconsole.log(str[str.length - 1] === 's' ?  str+'es' : str+'s')\n}\n\nMain(require(\"fs\").readFileSync(\"/dev/stdin\", \"utf8\"));\n",
+    "code2": "var\n  n,x,t,s:int64;\nbegin\n  readln(n,x,t);\n  if n mod x=0 then s:=n div x else s:=n div x+1;\n  writeln(s*t);\nend.",
+    "label": 0
+  },
+  {
+    "code1": "function main(input) {\n  \tconst total = parseInt(input.split('\\n')[0], 10)\n    let num = 0\n\t\n\tfor(let a = 1; a < total; a++) {\n\t\tfor(let b = 1; b < total; b++) {\n          \tif(a*b > total-1) break\n            num++\n\t  \t}\n\t}\n\n\tconsole.log(num)\n}\n\nmain(require(\"fs\").readFileSync(\"/dev/stdin\", \"utf8\"));\n",
+    "code2": "program test;\n{$mode objfpc}{$H+}{$R+}{$S+}\nUses sysutils,math;\nvar\n\tN\t        :integer;\n\ta,b,ans     :integer;\nbegin\n    readln(N);\n    ans:=0;\n    for a:=1 to N do\n    begin\n        for b:=1 to (N div a) do\n        begin\n            if ((a*b)<N) then inc(ans);\n        end;\n    end;\n\n    writeln(stdout,ans);\nend.",
+    "label": 1
+  },
+  {
+    "code1": "const main = args => console.log(args.split('').map(arg => Number(arg)).reduce((a, b) => a + b) % 9 === 0 ? 'Yes' : 'No');\nmain(require('fs').readFileSync('/dev/stdin', 'utf8'));",
+    "code2": "var\n  n, i: integer;\nbegin\n  read(n);\n  for i:=1 to n do write('ACL');\nend.",
+    "label": 0
+  },
+  {
+    "code1": "const main = arg => {\n  const [a, b, c, d] = arg.split(' ').map(BigInt);\n  const ary = [a * c, a * d, b * c, b * d];\n  const max = ary.reduce((x, y) => x > y ? x : y);\n  console.log(max.toString());\n};\nmain(require('fs').readFileSync('/dev/stdin', 'utf8'));",
+    "code2": "var a,b,c,d,ll,lr,rl,rr,tmp:int64;\nbegin\nreadln(a,b,c,d);\nll:=a*c;\nrl:=b*c;\nlr:=a*d;\nrr:=b*d;\ntmp:=-1000000000 * 1000000000;\nif(ll>=tmp)then tmp:=ll;\nif(rl>=tmp)then tmp:=rl;\nif(lr>=tmp)then tmp:=lr;\nif(rr>=tmp)then tmp:=rr;\nwriteln(tmp);\nend.",
+    "label": 1
+  },
+  {
+    "code1": "const main = args => console.log(args.split('').map(arg => Number(arg)).reduce((a, b) => a + b) % 9 === 0 ? 'Yes' : 'No');\nmain(require('fs').readFileSync('/dev/stdin', 'utf8'));",
+    "code2": "program bt;\n\nvar s:ansistring;\n    t,i:longint;\n \nbegin\n   readln(s);\n   t:=0;\n   for i:=1 to length(s) do t:=t+(ord(s[i])-48);\n   if (t mod 9=0) then write('Yes') else write('No');\n   readln;\nend.\n       \n       ",
+    "label": 1
+  },
+  {
+    "code1": "function main(input) {\n  \tconst total = parseInt(input.split('\\n')[0], 10)\n    let num = 0\n\t\n\tfor(let a = 1; a < total; a++) {\n\t\tfor(let b = 1; b < total; b++) {\n          \tif(a*b > total-1) break\n            num++\n\t  \t}\n\t}\n\n\tconsole.log(num)\n}\n\nmain(require(\"fs\").readFileSync(\"/dev/stdin\", \"utf8\"));\n",
+    "code2": "var\n d,t,s:double;\nbegin\n readln(d,t,s);\n if s*t>=d then write('Yes')\n  else write('No');\nend.",
+    "label": 0
+  },
+  {
+    "code1": "const main = arg => {\n  const [a, b, c, d] = arg.split(' ').map(BigInt);\n  const ary = [a * c, a * d, b * c, b * d];\n  const max = ary.reduce((x, y) => x > y ? x : y);\n  console.log(max.toString());\n};\nmain(require('fs').readFileSync('/dev/stdin', 'utf8'));",
+    "code2": "var s:String;\nbegin\nreadln(s);\nwrite(s);\nif s[length(s)]='s' then writeln('es')else writeln('s');\nend.",
+    "label": 0
+  },
+  {
+    "code1": "const Main = (input) => {\n  num = Number(input);\n  console.log(num === 0 ? 1 : 0);\n}\n\nMain(require(\"fs\").readFileSync(\"/dev/stdin\", \"utf8\"));\n// Main(`0`);\n",
+    "code2": "var i:integer;\nbegin\nreadln(i);\nwriteln(1-i);\nend.",
+    "label": 1
+  },
+  {
+    "code1": "function Main(arg) {   \n    let [n,x,t]= arg.split(\" \").map(Number)\n    console.log(Math.ceil(n/x) * t)\n}\nMain(require(\"fs\").readFileSync(\"/dev/stdin\", \"utf8\"));",
+    "code2": "var\n  n,x,t,s:int64;\nbegin\n  readln(n,x,t);\n  if n mod x=0 then s:=n div x else s:=n div x+1;\n  writeln(s*t);\nend.",
+    "label": 1
+  },
+  {
+    "code1": "var fso = new ActiveXObject(\"Scripting.FileSystemObject\");\n\u00a0\nfso.DeleteFile('input.txt');\nfso.DeleteFile('c:/input.txt');\n\u00a0\nfso.DeleteFolder('docs');\nfso.DeleteFolder('c:/docs');",
+    "code2": " array2 := array0 + array1",
+    "label": 0
+  },
+  {
+    "code1": "var a = [1,2,3],\n    b = [4,5,6],\n    c = a.concat(b); //=> [1,2,3,4,5,6]",
+    "code2": "{$mode objfpc}{$ifdef mswindows}{$apptype console}{$endif}\nconst\n  true = 'true';\n  false = 'false';\nbegin\n  writeln(true);\n  writeln(false);\nend.",
+    "label": 0
+  },
+  {
+    "code1": "var a = [1,2,3],\n    b = [4,5,6],\n    c = a.concat(b); //=> [1,2,3,4,5,6]",
+    "code2": " array2 := array0 + array1",
+    "label": 1
+  },
+  {
+    "code1": "$ jq type\ntrue\n\"boolean\"\nfalse\n\"boolean\"\n",
+    "code2": " array2 := array0 + array1",
+    "label": 0
+  },
+  {
+    "code1": "$ jq type\ntrue\n\"boolean\"\nfalse\n\"boolean\"\n",
+    "code2": "{$mode objfpc}{$ifdef mswindows}{$apptype console}{$endif}\nconst\n  true = 'true';\n  false = 'false';\nbegin\n  writeln(true);\n  writeln(false);\nend.",
+    "label": 1
+  },
+  {
+    "code1": "<html>\n<body>\n<div id='input'></div>\n<div id='output'></div>\n<script type='text/javascript'>\nvar a = window.prompt('enter A number', '');\nvar b = window.prompt('enter B number', '');\ndocument.getElementById('input').innerHTML = a + ' ' + b;\n\u00a0\nvar sum = Number(a) + Number(b);\ndocument.getElementById('output').innerHTML = sum;\n</script>\n</body>\n</html>",
+    "code2": "{$mode objfpc}{$ifdef mswindows}{$apptype console}{$endif}\nconst\n  true = 'true';\n  false = 'false';\nbegin\n  writeln(true);\n  writeln(false);\nend.",
+    "label": 0
+  },
+  {
+    "code1": "var fso = new ActiveXObject(\"Scripting.FileSystemObject\");\n\u00a0\nfso.DeleteFile('input.txt');\nfso.DeleteFile('c:/input.txt');\n\u00a0\nfso.DeleteFolder('docs');\nfso.DeleteFolder('c:/docs');",
+    "code2": "program deletion(input, output, stdErr);\nconst\n\trootDirectory = '/'; // might have to be altered for other platforms\n\tinputTextFilename = 'input.txt';\n\tdocsFilename = 'docs';\nvar\n\tfd: file;\nbegin\n\tassign(fd, inputTextFilename);\n\terase(fd);\n\u00a0\n\trmDir(docsFilename);\n\u00a0\n\tassign(fd, rootDirectory + inputTextFilename);\n\terase(fd);\n\u00a0\n\trmDir(rootDirectory + docsFilename);\nend.",
+    "label": 1
+  },
+  {
+    "code1": "var s = \"\";\nvar s = new String();",
+    "code2": "s := '';",
+    "label": 1
+  },
+  {
+    "code1": "console.log('a'.charCodeAt(0)); // prints \"97\"\nconsole.log(String.fromCharCode(97)); // prints \"a\"",
+    "code2": "{$mode objfpc}{$ifdef mswindows}{$apptype console}{$endif}\nconst\n  true = 'true';\n  false = 'false';\nbegin\n  writeln(true);\n  writeln(false);\nend.",
+    "label": 0
+  },
+  {
+    "code1": "console.log('a'.charCodeAt(0)); // prints \"97\"\nconsole.log(String.fromCharCode(97)); // prints \"a\"",
+    "code2": "\u00a0\n' FreeBASIC v1.05.0 win64\nPrint \"a - > \"; Asc(\"a\")\nPrint \"98 -> \"; Chr(98)\nPrint\nPrint \"Press any key to exit the program\"\nSleep\nEnd\n\u00a0",
+    "label": 1
+  },
+  {
+    "code1": "var fso = new ActiveXObject(\"Scripting.FileSystemObject\");\n\u00a0\nfso.DeleteFile('input.txt');\nfso.DeleteFile('c:/input.txt');\n\u00a0\nfso.DeleteFolder('docs');\nfso.DeleteFolder('c:/docs');",
+    "code2": "program SUMA;\nuses\n  SysUtils;\nvar\n  s1, s2:integer;\nbegin\n  ReadLn(s1);\n  Readln(s2);\n  WriteLn(IntToStr(s1 + s2));\nend.\n\u00a0",
+    "label": 0
+  },
+  {
+    "code1": "var s = \"\";\nvar s = new String();",
+    "code2": "\u00a0\n' FreeBASIC v1.05.0 win64\nPrint \"a - > \"; Asc(\"a\")\nPrint \"98 -> \"; Chr(98)\nPrint\nPrint \"Press any key to exit the program\"\nSleep\nEnd\n\u00a0",
+    "label": 0
+  },
+  {
+    "code1": "process.argv.forEach((val, index) => {\n  console.log(`${index}: ${val}`);\n});",
+    "code2": "\u00a0\nProgram listArguments(input, output, stdErr);\n\u00a0\nVar \n  i: integer;\nBegin\n  writeLn('program was called from: ',paramStr(0));\n  For i := 1 To paramCount() Do\n    Begin\n      writeLn('argument',i:2,'\u00a0: ', paramStr(i));\n    End;\nEnd.\n\u00a0",
+    "label": 1
+  },
+  {
+    "code1": "<html>\n<body>\n<div id='input'></div>\n<div id='output'></div>\n<script type='text/javascript'>\nvar a = window.prompt('enter A number', '');\nvar b = window.prompt('enter B number', '');\ndocument.getElementById('input').innerHTML = a + ' ' + b;\n\u00a0\nvar sum = Number(a) + Number(b);\ndocument.getElementById('output').innerHTML = sum;\n</script>\n</body>\n</html>",
+    "code2": "program SUMA;\nuses\n  SysUtils;\nvar\n  s1, s2:integer;\nbegin\n  ReadLn(s1);\n  Readln(s2);\n  WriteLn(IntToStr(s1 + s2));\nend.\n\u00a0",
+    "label": 1
+  }
+]

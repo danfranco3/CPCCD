@@ -1,0 +1,152 @@
+[
+  {
+    "code1": "import java.util.Scanner;\n\npublic class Main{\n  public static void main(String[] agrs){\n    Scanner sc = new Scanner(System.in);\n    int k = sc.nextInt();\n    \n    String str = \"ACL\";\n    for(int i=0; i<k; i++){\n      System.out.print(str);\n    }\n  }\n}",
+    "code2": "program repeat_acl\n  implicit none\n  integer :: k\n  read(*,*) k\n  write(*,'(a)') repeat('ACL', k)\nend program repeat_acl",
+    "label": 1
+  },
+  {
+    "code1": "import java.util.*;\nimport java.io.*;\nimport java.lang.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n        String s = sc.next();\n\n        if (s.charAt(s.length()-1) == 's')\n            System.out.println(s+\"es\");\n        else\n            System.out.println(s+'s');\n    }\n}",
+    "code2": "program a179\n\nimplicit none\ncharacter(len=1002) :: s\ninteger :: i, j\n\nread *, s\n\ndo i= 1, 1001\n if(s(i:i)==' ') then\n  j = i-1\n  exit\n end if\nend do\n\n!print *, j\n\nif(s(j:j)=='s') then\n s(j+1:j+2) = 'es' \nelse\n s(j+1:j+1) = 's'\nend if\n\nprint *, trim(s)\n\nend program a179",
+    "label": 1
+  },
+  {
+    "code1": "import java.util.*;\npublic class Main {\n\tpublic static void main(String[] args){\n\t\tScanner sc = new Scanner(System.in);\n\t\tlong a = sc.nextLong();\n\t\tlong b = sc.nextLong();\n        long c = sc.nextLong();\n        long d = sc.nextLong();       \n\t\tSystem.out.println(Math.max(Math.max(a*c,a*d),Math.max(b*c,b*d)));\n\t}\n}",
+    "code2": "program Main\nimplicit none\n    integer(16) ans,a,b,c,d,x,y\n    read (*,*) a, b, c, d\n    x=max(a*c,a*d)\n    y=max(b*c,b*d)\n    ans=max(x,y)\n    write(*,*) ans\nend program Main",
+    "label": 1
+  },
+  {
+    "code1": "import java.util.*;\npublic class Main {\n\tpublic static void main(String[] args){\n\t\tScanner sc = new Scanner(System.in);\n\t\tint d = sc.nextInt();\n        int t = sc.nextInt();\n\t\tint s = sc.nextInt();\n       if(t*s>=d){System.out.println(\"Yes\");}\n\t\telse{System.out.println(\"No\");}\n\t}\n}\n",
+    "code2": "character(1000) :: s,t\ninteger :: sLen,tLen,i,j,mx=0,tempMx\nread*,s\nread*,t\nsLen = len_trim( s )\ntLen = len_trim( t )\n\ndo i = 0,sLen-tLen\n  tempMx = 0\n  do j = 1,tLen\n    if( s(j+i:j+i)==t(j:j) ) tempMx = tempMx + 1\n  end do\n  mx = max( tempMx,mx )\nend do\nprint*,tLen-mx\nend\n",
+    "label": 0
+  },
+  {
+    "code1": "import java.util.*;\npublic class Main {\n\tpublic static void main(String[] args){\n\t\tScanner sc = new Scanner(System.in);\n\t\tlong a = sc.nextLong();\n\t\tlong b = sc.nextLong();\n        long c = sc.nextLong();\n        long d = sc.nextLong();       \n\t\tSystem.out.println(Math.max(Math.max(a*c,a*d),Math.max(b*c,b*d)));\n\t}\n}",
+    "code2": "program main\n    implicit none\n    integer n,i\n    integer,allocatable :: D(:,:)\n\n    read(*,*)n\n    allocate(D(1:n,1:2))\n    do i=1,n\n        read(*,*)D(i,1:2)\n    enddo\n    do i=1,n-2\n        if(D(i,1)==D(i,2) .and. D(i+1,1)==D(i+1,2).and.D(i+2,1)==D(i+2,2))then\n            write(*,*)\"Yes\"\n            RETURN\n        endif\n    enddo\n    write(*,*)\"No\"\nend program main",
+    "label": 0
+  },
+  {
+    "code1": "import java.util.Scanner;\n\npublic class Main {\n\n  public static void main(String[] args) {\n    Scanner sc = new Scanner(System.in);\n    int n = sc.nextInt();\n    sc.close();\n    System.out.println(solve(n - 1));\n  }\n\n  static int solve(int n){\n    if(n == 1) {\n      return 1;\n    }\n    int ans = 0;\n    for(int i = 1; i <= n; i++){\n      ans += n / i;\n    }\n    return ans;\n  }\n}",
+    "code2": "program Main\nimplicit none\n\tinteger i\n    read(*,*) i\n    if (i==1) then \n    \twrite(*,*) 0\n    else\n    \twrite(*,*) 1\n    end if\nend program Main",
+    "label": 0
+  },
+  {
+    "code1": "import java.util.Scanner;\n\npublic class Main{\n  public static void main(String[] agrs){\n    Scanner sc = new Scanner(System.in);\n    int k = sc.nextInt();\n    \n    String str = \"ACL\";\n    for(int i=0; i<k; i++){\n      System.out.print(str);\n    }\n  }\n}",
+    "code2": "program answer\n  implicit none\n  integer(8) :: i, N, ans\n  read(*,*) N\n  ans=0\n  do i = 1, N-1\n     ans=ans+((N-1)/i)\n  end do\n\n  write(*,*) ans\n  stop\n end program answer",
+    "label": 0
+  },
+  {
+    "code1": "import java.util.*;\nimport java.io.*;\nimport java.lang.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n\n        String s = sc.next();\n\n        if (s.charAt(s.length()-1) == 's')\n            System.out.println(s+\"es\");\n        else\n            System.out.println(s+'s');\n    }\n}",
+    "code2": "integer :: d,t,s\n\nread*,d,t,s\n\nif( d>t*s )then\n  print*,'No'\nelse\n  print*,'Yes'\nend if\nend",
+    "label": 0
+  },
+  {
+    "code1": "import java.util.*;\n\npublic class Main{\n\tpublic static void main(String args[]){\n\t\n\t\tScanner ob = new Scanner(System.in);\n\t\tint N = ob.nextInt();\n\t\tint is = 0;\n\n\t\tfor(int roll = 1; roll <= N; roll++){\n\t\t\t\n\t\t\tint a = ob.nextInt();\n\t\t\tint b = ob.nextInt();\n\n\t\t\tif(a == b){\n\t\t\t\t++is;\n\t\t\t}else{\n\t\t\t\tis = 0;\n\t\t\t}\n\n\t\t\tif(is == 3){\n\t\t\t\tbreak;\n\t\t\t}\n\t\t}\n\t\tSystem.out.println((is == 3) ? \"Yes\" : \"No\");\n\t}\n}\n",
+    "code2": "program main\n    implicit none\n    integer n,i\n    integer,allocatable :: D(:,:)\n\n    read(*,*)n\n    allocate(D(1:n,1:2))\n    do i=1,n\n        read(*,*)D(i,1:2)\n    enddo\n    do i=1,n-2\n        if(D(i,1)==D(i,2) .and. D(i+1,1)==D(i+1,2).and.D(i+2,1)==D(i+2,2))then\n            write(*,*)\"Yes\"\n            RETURN\n        endif\n    enddo\n    write(*,*)\"No\"\nend program main",
+    "label": 1
+  },
+  {
+    "code1": "import java.util.*;\nclass Main{\npublic static void main(String[]args){\nScanner sc=new Scanner(System.in);\nchar[] s=sc.next().toCharArray();\n  char[] t=sc.next().toCharArray();\n  int min=1000000;\n  for(int i=0;i<s.length-t.length+1;i++){\n    int a=0;\n    for(int j=0;j<t.length;j++){\n    \tif(s[i+j]==t[j])a++;\n    }\n    min=Math.min(min,t.length-a);\n  }System.out.println(min);\n}\n}",
+    "code2": "program repeat_acl\n  implicit none\n  integer :: k\n  read(*,*) k\n  write(*,'(a)') repeat('ACL', k)\nend program repeat_acl",
+    "label": 0
+  },
+  {
+    "code1": "import java.util.*;\n\npublic class Main{\n\tpublic static void main(String[] args){\n\t\tScanner scan = new Scanner(System.in);\n\t\tint x = scan.nextInt();\n\t\tSystem.out.print(x == 0? 1:0);\n\n\t}\n}\n",
+    "code2": "program Main\nimplicit none\n\tinteger i\n    read(*,*) i\n    if (i==1) then \n    \twrite(*,*) 0\n    else\n    \twrite(*,*) 1\n    end if\nend program Main",
+    "label": 1
+  },
+  {
+    "code1": "import java.util.*;\nclass Main{\npublic static void main(String[]args){\nScanner sc=new Scanner(System.in);\nchar[] s=sc.next().toCharArray();\n  char[] t=sc.next().toCharArray();\n  int min=1000000;\n  for(int i=0;i<s.length-t.length+1;i++){\n    int a=0;\n    for(int j=0;j<t.length;j++){\n    \tif(s[i+j]==t[j])a++;\n    }\n    min=Math.min(min,t.length-a);\n  }System.out.println(min);\n}\n}",
+    "code2": "character(1000) :: s,t\ninteger :: sLen,tLen,i,j,mx=0,tempMx\nread*,s\nread*,t\nsLen = len_trim( s )\ntLen = len_trim( t )\n\ndo i = 0,sLen-tLen\n  tempMx = 0\n  do j = 1,tLen\n    if( s(j+i:j+i)==t(j:j) ) tempMx = tempMx + 1\n  end do\n  mx = max( tempMx,mx )\nend do\nprint*,tLen-mx\nend\n",
+    "label": 1
+  },
+  {
+    "code1": "import java.util.*;\n\npublic class Main{\n\tpublic static void main(String args[]){\n\t\n\t\tScanner ob = new Scanner(System.in);\n\t\tint N = ob.nextInt();\n\t\tint is = 0;\n\n\t\tfor(int roll = 1; roll <= N; roll++){\n\t\t\t\n\t\t\tint a = ob.nextInt();\n\t\t\tint b = ob.nextInt();\n\n\t\t\tif(a == b){\n\t\t\t\t++is;\n\t\t\t}else{\n\t\t\t\tis = 0;\n\t\t\t}\n\n\t\t\tif(is == 3){\n\t\t\t\tbreak;\n\t\t\t}\n\t\t}\n\t\tSystem.out.println((is == 3) ? \"Yes\" : \"No\");\n\t}\n}\n",
+    "code2": "program Main\nimplicit none\n    integer(16) ans,a,b,c,d,x,y\n    read (*,*) a, b, c, d\n    x=max(a*c,a*d)\n    y=max(b*c,b*d)\n    ans=max(x,y)\n    write(*,*) ans\nend program Main",
+    "label": 0
+  },
+  {
+    "code1": "import java.util.*;\n\npublic class Main{\n\tpublic static void main(String[] args){\n\t\tScanner scan = new Scanner(System.in);\n\t\tint x = scan.nextInt();\n\t\tSystem.out.print(x == 0? 1:0);\n\n\t}\n}\n",
+    "code2": "program a179\n\nimplicit none\ncharacter(len=1002) :: s\ninteger :: i, j\n\nread *, s\n\ndo i= 1, 1001\n if(s(i:i)==' ') then\n  j = i-1\n  exit\n end if\nend do\n\n!print *, j\n\nif(s(j:j)=='s') then\n s(j+1:j+2) = 'es' \nelse\n s(j+1:j+1) = 's'\nend if\n\nprint *, trim(s)\n\nend program a179",
+    "label": 0
+  },
+  {
+    "code1": "import java.util.Scanner;\n\npublic class Main {\n\n  public static void main(String[] args) {\n    Scanner sc = new Scanner(System.in);\n    int n = sc.nextInt();\n    sc.close();\n    System.out.println(solve(n - 1));\n  }\n\n  static int solve(int n){\n    if(n == 1) {\n      return 1;\n    }\n    int ans = 0;\n    for(int i = 1; i <= n; i++){\n      ans += n / i;\n    }\n    return ans;\n  }\n}",
+    "code2": "program answer\n  implicit none\n  integer(8) :: i, N, ans\n  read(*,*) N\n  ans=0\n  do i = 1, N-1\n     ans=ans+((N-1)/i)\n  end do\n\n  write(*,*) ans\n  stop\n end program answer",
+    "label": 1
+  },
+  {
+    "code1": "import java.util.*;\npublic class Main {\n\tpublic static void main(String[] args){\n\t\tScanner sc = new Scanner(System.in);\n\t\tint d = sc.nextInt();\n        int t = sc.nextInt();\n\t\tint s = sc.nextInt();\n       if(t*s>=d){System.out.println(\"Yes\");}\n\t\telse{System.out.println(\"No\");}\n\t}\n}\n",
+    "code2": "integer :: d,t,s\n\nread*,d,t,s\n\nif( d>t*s )then\n  print*,'No'\nelse\n  print*,'Yes'\nend if\nend",
+    "label": 1
+  },
+  {
+    "code1": "public static long fib(int n) {\n    if (n < 0)\n        throw new IllegalArgumentException(\"n can not be a negative number\");\n\u00a0\n    return new Object() {\n        private long fibInner(int n) {\n            return (n < 2) ? n : (fibInner(n - 1) + fibInner(n - 2));\n        }\n    }.fibInner(n);\n}",
+    "code2": "program a_plus_b\n  implicit none\n  integer :: a,b\n  read (*, *) a, b\n  write (*, '(i0)') a + b\nend program a_plus_b",
+    "label": 0
+  },
+  {
+    "code1": "public class Test {\n\u00a0\n    public static void main(String[] args) {\n\u00a0\n        // let n be zero\n        int n = 0;\n\u00a0\n        // repeat the following action\n        do {\n\u00a0\n            // increase n by 1\n            n++;\n\u00a0\n        // while the modulo of n times n is not equal to 269696\n        } while (n * n % 1000_000 != 269696);\n\u00a0\n        // show the result\n        System.out.println(n);\n    }\n}",
+    "code2": "program a_plus_b\n  implicit none\n  integer :: a,b\n  read (*, *) a, b\n  write (*, '(i0)') a + b\nend program a_plus_b",
+    "label": 0
+  },
+  {
+    "code1": "int[] array = new int[10]; //optionally, replace \"new int[10]\" with a braced list of ints like \"{1, 2, 3}\"\narray[0] = 42;\nSystem.out.println(array[3]);",
+    "code2": "integer a (10)",
+    "label": 1
+  },
+  {
+    "code1": "public class Test {\n\u00a0\n    public static void main(String[] args) {\n\u00a0\n        // let n be zero\n        int n = 0;\n\u00a0\n        // repeat the following action\n        do {\n\u00a0\n            // increase n by 1\n            n++;\n\u00a0\n        // while the modulo of n times n is not equal to 269696\n        } while (n * n % 1000_000 != 269696);\n\u00a0\n        // show the result\n        System.out.println(n);\n    }\n}",
+    "code2": "program a_plus_b\n  implicit none\n  integer :: a,b\n  read (*, *) a, b\n  write (*, '(i0)') a + b\nend program a_plus_b",
+    "label": 0
+  },
+  {
+    "code1": "julia> x = [1, 2, 3]\njulia> ptr = pointer_from_objref(x)\nPtr{Void} @0x000000010282e4a0\njulia> unsafe_pointer_to_objref(ptr)\n3-element Array{Int64,1}:\n 1 \n 2 \n 3",
+    "code2": "program test_loc\n  implicit none\n\u00a0\n  integer :: i\n  real    :: r\n\u00a0\n  i = loc(r)\n  print *, i\nend program",
+    "label": 1
+  },
+  {
+    "code1": "ClassWithStaticMethod.staticMethodName(argument1, argument2);//for methods with no arguments, use empty parentheses",
+    "code2": "integer a (10)",
+    "label": 0
+  },
+  {
+    "code1": "$ jq type\ntrue\n\"boolean\"\nfalse\n\"boolean\"\n",
+    "code2": "      TYPE MIXED\n       LOGICAL*1 LIVE\n       REAL*8    VALUE\n      END TYPE MIXED\n      TYPE(MIXED) STUFF(100)",
+    "label": 1
+  },
+  {
+    "code1": "ClassWithStaticMethod.staticMethodName(argument1, argument2);//for methods with no arguments, use empty parentheses",
+    "code2": "\u00a0\n! type declaration\ntype my_type\n contains\nprocedure, pass :: method1\nprocedure, pass, pointer :: method2\nend type my_type\n\u00a0\n! declare object of type my_type\ntype(my_type) :: mytype_object\n\u00a0\n!static call\n call mytype_object%method1() ! call method1 defined as subroutine\n!instance?\n mytype_object%method2() ! call method2 defined as function\n\u00a0\n\u00a0",
+    "label": 1
+  },
+  {
+    "code1": "ClassWithStaticMethod.staticMethodName(argument1, argument2);//for methods with no arguments, use empty parentheses",
+    "code2": "integer a (10)",
+    "label": 0
+  },
+  {
+    "code1": "public static long fib(int n) {\n    if (n < 0)\n        throw new IllegalArgumentException(\"n can not be a negative number\");\n\u00a0\n    return new Object() {\n        private long fibInner(int n) {\n            return (n < 2) ? n : (fibInner(n - 1) + fibInner(n - 2));\n        }\n    }.fibInner(n);\n}",
+    "code2": "integer function fib(n)\n  integer, intent(in) :: n\n  if (n < 0 ) then\n    write (*,*) 'Bad argument: fib(',n,')'\n    stop\n  else\n    fib = purefib(n)\n  end if\ncontains\n  recursive pure integer function purefib(n) result(f)\n    integer, intent(in) :: n\n    if (n < 2 ) then\n      f = n\n    else\n      f = purefib(n-1) + purefib(n-2)\n    end if\n  end function purefib\nend function fib",
+    "label": 1
+  },
+  {
+    "code1": "$ jq type\ntrue\n\"boolean\"\nfalse\n\"boolean\"\n",
+    "code2": "integer a (10)",
+    "label": 0
+  },
+  {
+    "code1": "public class Test {\n\u00a0\n    public static void main(String[] args) {\n\u00a0\n        // let n be zero\n        int n = 0;\n\u00a0\n        // repeat the following action\n        do {\n\u00a0\n            // increase n by 1\n            n++;\n\u00a0\n        // while the modulo of n times n is not equal to 269696\n        } while (n * n % 1000_000 != 269696);\n\u00a0\n        // show the result\n        System.out.println(n);\n    }\n}",
+    "code2": "program test_loc\n  implicit none\n\u00a0\n  integer :: i\n  real    :: r\n\u00a0\n  i = loc(r)\n  print *, i\nend program",
+    "label": 0
+  },
+  {
+    "code1": "public class Test {\n\u00a0\n    public static void main(String[] args) {\n\u00a0\n        // let n be zero\n        int n = 0;\n\u00a0\n        // repeat the following action\n        do {\n\u00a0\n            // increase n by 1\n            n++;\n\u00a0\n        // while the modulo of n times n is not equal to 269696\n        } while (n * n % 1000_000 != 269696);\n\u00a0\n        // show the result\n        System.out.println(n);\n    }\n}",
+    "code2": "      DO 3 N=1,99736\n      IF(MODF(N*N,1000000)-269696)3,4,3\n 3    CONTINUE\n 4    PRINT 5,N\n 5    FORMAT(I6)\n      STOP\n\u00a0",
+    "label": 1
+  },
+  {
+    "code1": "import java.util.Scanner;\n\u00a0\npublic class Sum2 {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in); // Standard input\n        System.out.println(in.nextInt() + in.nextInt()); // Standard output\n    }\n}",
+    "code2": "program a_plus_b\n  implicit none\n  integer :: a,b\n  read (*, *) a, b\n  write (*, '(i0)') a + b\nend program a_plus_b",
+    "label": 1
+  }
+]

@@ -1,0 +1,152 @@
+[
+  {
+    "code1": "print(1 if int(input()) == 0 else 0)",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. SORTNUM.\n\nDATA DIVISION.\n    WORKING-STORAGE SECTION.\n      \n      01 X PIC 9.\n\nPROCEDURE DIVISION.\n    MAIN SECTION.\n      \n      ACCEPT X.\n      \n      IF X = 0 THEN\n      \tDISPLAY 1\n      ELSE\n      \tDISPLAY 0\n      END-IF.\n\n\n    STOP RUN.\n",
+    "label": 1
+  },
+  {
+    "code1": "X = int(input())\nif X >= 30:\n  print(\"Yes\")\nelse:\n  print(\"No\")\n",
+    "code2": "IDENTIFICATION  DIVISION.\nPROGRAM-ID.     HELLO.\n\n \nDATA DIVISION.\n\tWORKING-STORAGE SECTION.\n        01 X PIC S99.\n      \nPROCEDURE       DIVISION.\n    ACCEPT X.\n    \n    IF X < 30 THEN \n      DISPLAY 'No'\n    ELSE\n      DISPLAY 'Yes'\n    END-IF.\n    \n    STOP RUN.",
+    "label": 1
+  },
+  {
+    "code1": "#!/usr/bin/env python3\n\nimport decimal\n#import\n#import math\n#import numpy as np\n#= int(input())\n#= input()\nA, B = map(decimal.Decimal, input().split())\n\nprint(int(A * B))\n",
+    "code2": "program-id. abc169c.\n\ndata division.\n  working-storage section.\n  77 ab   pic x(21).\n  77 a    pic 9(16).\n  77 b    pic 9v99.\n  77 ans  pic z(16)9.\n\nprocedure division.\n  accept ab.\n  unstring ab delimited by space into a b.\n  compute ans = a * b.\n  display ans.\n  stop run.\n",
+    "label": 1
+  },
+  {
+    "code1": "K=int(input())\nS=input()\nN=len(S)\n\nif N<=K:\n    print(S)\nelse:\n    ans=[]\n    for i in range(K):\n        ans.append(S[i])\n    print(''.join(ans)+'...')",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROGRAM_ID.\n\nDATA DIVISION.\nWORKING-STORAGE SECTION.\n01 S              PIC X(11).\n01 T              PIC X(11).\n\nPROCEDURE DIVISION.\n  ACCEPT S.\n  ACCEPT T.\n\n  IF S = T(1 : FUNCTION STORED-CHAR-LENGTH(T) - 1)\n      DISPLAY \"Yes\"\n  ELSE\n      DISPLAY \"No\"\n  END-IF.\n  STOP RUN.\n",
+    "label": 0
+  },
+  {
+    "code1": "#!/usr/bin/env python3\n\nimport decimal\n#import\n#import math\n#import numpy as np\n#= int(input())\n#= input()\nA, B = map(decimal.Decimal, input().split())\n\nprint(int(A * B))\n",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROGRAM_ID.\n\nDATA DIVISION.\nWORKING-STORAGE SECTION.\n01 a          PIC 9(10).\n01 ans        PIC 9(10).\n01 zs         PIC Z(9)9.\n\nPROCEDURE DIVISION.\n  ACCEPT a.\n  COMPUTE ans = a + a ** 2 + a ** 3.\n  MOVE ans TO zs.\n  DISPLAY FUNCTION TRIM(zs).\n  STOP RUN.\n",
+    "label": 0
+  },
+  {
+    "code1": "m = input()\nx = ord(m)\nif x >= 97 and x <= 122:\n    print(\"a\")\nelse:\n    print(\"A\")",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROGRAM_ID.\nDATA DIVISION.\nWORKING-STORAGE SECTION.\n01 LN         PIC X(30).\n01 A          PIC 9(10).\n01 B          PIC 9(10).\n01 ANS        PIC Z(9)9(1).\n\nPROCEDURE DIVISION.\n  ACCEPT LN.\n  UNSTRING LN DELIMITED BY SPACE INTO A B.\n  MULTIPLY A BY B GIVING ANS.\n  DISPLAY FUNCTION TRIM(ANS).\n  STOP RUN.\n",
+    "label": 0
+  },
+  {
+    "code1": "print(1 if int(input()) == 0 else 0)",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROGRAM_ID.\n\nDATA DIVISION.\nWORKING-STORAGE SECTION.\n01 a          PIC X(1).\n\nPROCEDURE DIVISION.\n  ACCEPT a.\n  IF a <= \"Z\"\n    DISPLAY \"A\"\n  ELSE\n    DISPLAY \"a\"\n  END-IF.\n  STOP RUN.\n",
+    "label": 0
+  },
+  {
+    "code1": "X = int(input())\nif X >= 30:\n  print(\"Yes\")\nelse:\n  print(\"No\")\n",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROGRAM_ID.\n\nDATA DIVISION.\nWORKING-STORAGE SECTION.\n01 K              PIC 9(10).\n01 S              PIC X(100).\n\nPROCEDURE DIVISION.\n  ACCEPT K.\n  ACCEPT S.\n  IF K < FUNCTION STORED-CHAR-LENGTH(S)\n      DISPLAY S(1 : K) \"...\"\n  ELSE\n      DISPLAY FUNCTION TRIM(S)\n  END-IF.\n  STOP RUN.\n",
+    "label": 0
+  },
+  {
+    "code1": "m = int(input())\nn = m +(m ** 2) + (m ** 3)\nprint(n)",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROGRAM_ID.\n\nDATA DIVISION.\nWORKING-STORAGE SECTION.\n01 a          PIC 9(10).\n01 ans        PIC 9(10).\n01 zs         PIC Z(9)9.\n\nPROCEDURE DIVISION.\n  ACCEPT a.\n  COMPUTE ans = a + a ** 2 + a ** 3.\n  MOVE ans TO zs.\n  DISPLAY FUNCTION TRIM(zs).\n  STOP RUN.\n",
+    "label": 1
+  },
+  {
+    "code1": "S = input()\nT = input()\n\nif S == T[:-1]:\n  print('Yes')\nelse:\n  print('No')\n",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. SORTNUM.\n\nDATA DIVISION.\n    WORKING-STORAGE SECTION.\n      \n      01 X PIC 9.\n\nPROCEDURE DIVISION.\n    MAIN SECTION.\n      \n      ACCEPT X.\n      \n      IF X = 0 THEN\n      \tDISPLAY 1\n      ELSE\n      \tDISPLAY 0\n      END-IF.\n\n\n    STOP RUN.\n",
+    "label": 0
+  },
+  {
+    "code1": "A,B=map(int,input().split())\nprint(A*B)",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROGRAM_ID.\nDATA DIVISION.\nWORKING-STORAGE SECTION.\n01 LN         PIC X(30).\n01 A          PIC 9(10).\n01 B          PIC 9(10).\n01 ANS        PIC Z(9)9(1).\n\nPROCEDURE DIVISION.\n  ACCEPT LN.\n  UNSTRING LN DELIMITED BY SPACE INTO A B.\n  MULTIPLY A BY B GIVING ANS.\n  DISPLAY FUNCTION TRIM(ANS).\n  STOP RUN.\n",
+    "label": 1
+  },
+  {
+    "code1": "S = input()\nT = input()\n\nif S == T[:-1]:\n  print('Yes')\nelse:\n  print('No')\n",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROGRAM_ID.\n\nDATA DIVISION.\nWORKING-STORAGE SECTION.\n01 S              PIC X(11).\n01 T              PIC X(11).\n\nPROCEDURE DIVISION.\n  ACCEPT S.\n  ACCEPT T.\n\n  IF S = T(1 : FUNCTION STORED-CHAR-LENGTH(T) - 1)\n      DISPLAY \"Yes\"\n  ELSE\n      DISPLAY \"No\"\n  END-IF.\n  STOP RUN.\n",
+    "label": 1
+  },
+  {
+    "code1": "m = int(input())\nn = m +(m ** 2) + (m ** 3)\nprint(n)",
+    "code2": "program-id. abc169c.\n\ndata division.\n  working-storage section.\n  77 ab   pic x(21).\n  77 a    pic 9(16).\n  77 b    pic 9v99.\n  77 ans  pic z(16)9.\n\nprocedure division.\n  accept ab.\n  unstring ab delimited by space into a b.\n  compute ans = a * b.\n  display ans.\n  stop run.\n",
+    "label": 0
+  },
+  {
+    "code1": "A,B=map(int,input().split())\nprint(A*B)",
+    "code2": "IDENTIFICATION  DIVISION.\nPROGRAM-ID.     HELLO.\n\n \nDATA DIVISION.\n\tWORKING-STORAGE SECTION.\n        01 X PIC S99.\n      \nPROCEDURE       DIVISION.\n    ACCEPT X.\n    \n    IF X < 30 THEN \n      DISPLAY 'No'\n    ELSE\n      DISPLAY 'Yes'\n    END-IF.\n    \n    STOP RUN.",
+    "label": 0
+  },
+  {
+    "code1": "m = input()\nx = ord(m)\nif x >= 97 and x <= 122:\n    print(\"a\")\nelse:\n    print(\"A\")",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROGRAM_ID.\n\nDATA DIVISION.\nWORKING-STORAGE SECTION.\n01 a          PIC X(1).\n\nPROCEDURE DIVISION.\n  ACCEPT a.\n  IF a <= \"Z\"\n    DISPLAY \"A\"\n  ELSE\n    DISPLAY \"a\"\n  END-IF.\n  STOP RUN.\n",
+    "label": 1
+  },
+  {
+    "code1": "K=int(input())\nS=input()\nN=len(S)\n\nif N<=K:\n    print(S)\nelse:\n    ans=[]\n    for i in range(K):\n        ans.append(S[i])\n    print(''.join(ans)+'...')",
+    "code2": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROGRAM_ID.\n\nDATA DIVISION.\nWORKING-STORAGE SECTION.\n01 K              PIC 9(10).\n01 S              PIC X(100).\n\nPROCEDURE DIVISION.\n  ACCEPT K.\n  ACCEPT S.\n  IF K < FUNCTION STORED-CHAR-LENGTH(S)\n      DISPLAY S(1 : K) \"...\"\n  ELSE\n      DISPLAY FUNCTION TRIM(S)\n  END-IF.\n  STOP RUN.\n",
+    "label": 1
+  },
+  {
+    "code1": "import sys\nprogram_name = sys.argv[0]\narguments = sys.argv[1:]\ncount = len(arguments)",
+    "code2": "FUNCTION MEDIAN(some-table (ALL))",
+    "label": 0
+  },
+  {
+    "code1": "import sys\nprogram_name = sys.argv[0]\narguments = sys.argv[1:]\ncount = len(arguments)",
+    "code2": "FUNCTION MEDIAN(some-table (ALL))",
+    "label": 0
+  },
+  {
+    "code1": "X, Y = 0, 1\np = (3, 4)\np = [3, 4]\n\u00a0\nprint p[X]",
+    "code2": "\u00a0\n01 Point.\n   05 x            pic 9(3).\n   05 y            pic 9(3).\n\u00a0",
+    "label": 1
+  },
+  {
+    "code1": "import sys\nprogram_name = sys.argv[0]\narguments = sys.argv[1:]\ncount = len(arguments)",
+    "code2": "FUNCTION MEDIAN(some-table (ALL))",
+    "label": 0
+  },
+  {
+    "code1": "foo = object()  # Create (instantiate) an empty object\naddress = id(foo)",
+    "code2": "data division.\nworking-storage section.\n01 ptr usage pointer.\n01 var pic x(64).\n\u00a0\nprocedure division.\nset ptr to address of var.",
+    "label": 1
+  },
+  {
+    "code1": "X, Y = 0, 1\np = (3, 4)\np = [3, 4]\n\u00a0\nprint p[X]",
+    "code2": "       identification division.\n       program-id. character-codes.\n       remarks. COBOL is an ordinal language, first is 1.\n       remarks. 42nd ASCII code is \")\" not, \"*\".\n       procedure division.\n       display function char(42)\n       display function ord('*')\n       goback.\n       end program character-codes.",
+    "label": 0
+  },
+  {
+    "code1": "print ord('a') # prints \"97\"\nprint chr(97)  # prints \"a\"",
+    "code2": "       identification division.\n       program-id. character-codes.\n       remarks. COBOL is an ordinal language, first is 1.\n       remarks. 42nd ASCII code is \")\" not, \"*\".\n       procedure division.\n       display function char(42)\n       display function ord('*')\n       goback.\n       end program character-codes.",
+    "label": 1
+  },
+  {
+    "code1": "import sys\nprogram_name = sys.argv[0]\narguments = sys.argv[1:]\ncount = len(arguments)",
+    "code2": "       IDENTIFICATION DIVISION.\n       PROGRAM-ID. accept-all-args.\n\u00a0\n       DATA DIVISION.\n       WORKING-STORAGE SECTION.\n       01  args                   PIC X(50).\n\u00a0\n       PROCEDURE DIVISION.\n       main-line.\n           ACCEPT args FROM COMMAND-LINE\n           DISPLAY args\n\u00a0\n           GOBACK\n           .",
+    "label": 1
+  },
+  {
+    "code1": "def median(aray):\n    srtd = sorted(aray)\n    alen = len(srtd)\n    return 0.5*( srtd[(alen-1)//2] + srtd[alen//2])\n\u00a0\na = (4.1, 5.6, 7.2, 1.7, 9.3, 4.4, 3.2)\nprint a, median(a)\na = (4.1, 7.2, 1.7, 9.3, 4.4, 3.2)\nprint a, median(a)",
+    "code2": "FUNCTION MEAN(some-table (ALL))",
+    "label": 0
+  },
+  {
+    "code1": "from math import fsum\ndef average(x):\n    return fsum(x)/float(len(x)) if x else 0\nprint (average([0,0,3,1,4,1,5,9,0,0]))\nprint (average([1e20,-1e-20,3,1,4,1,5,9,-1e20,1e-20]))",
+    "code2": "FUNCTION MEAN(some-table (ALL))",
+    "label": 1
+  },
+  {
+    "code1": "X, Y = 0, 1\np = (3, 4)\np = [3, 4]\n\u00a0\nprint p[X]",
+    "code2": "       IDENTIFICATION DIVISION.\n       PROGRAM-ID. accept-all-args.\n\u00a0\n       DATA DIVISION.\n       WORKING-STORAGE SECTION.\n       01  args                   PIC X(50).\n\u00a0\n       PROCEDURE DIVISION.\n       main-line.\n           ACCEPT args FROM COMMAND-LINE\n           DISPLAY args\n\u00a0\n           GOBACK\n           .",
+    "label": 0
+  },
+  {
+    "code1": "X, Y = 0, 1\np = (3, 4)\np = [3, 4]\n\u00a0\nprint p[X]",
+    "code2": "       identification division.\n       program-id. character-codes.\n       remarks. COBOL is an ordinal language, first is 1.\n       remarks. 42nd ASCII code is \")\" not, \"*\".\n       procedure division.\n       display function char(42)\n       display function ord('*')\n       goback.\n       end program character-codes.",
+    "label": 0
+  },
+  {
+    "code1": "def median(aray):\n    srtd = sorted(aray)\n    alen = len(srtd)\n    return 0.5*( srtd[(alen-1)//2] + srtd[alen//2])\n\u00a0\na = (4.1, 5.6, 7.2, 1.7, 9.3, 4.4, 3.2)\nprint a, median(a)\na = (4.1, 7.2, 1.7, 9.3, 4.4, 3.2)\nprint a, median(a)",
+    "code2": "FUNCTION MEDIAN(some-table (ALL))",
+    "label": 1
+  },
+  {
+    "code1": "try: raw_input\nexcept: raw_input = input\n\u00a0\nprint(sum(map(int, raw_input().split())))",
+    "code2": "       IDENTIFICATION DIVISION.\n       PROGRAM-ID. A-Plus-B.\n\u00a0\n       DATA DIVISION.\n       WORKING-STORAGE SECTION.\n       01  A       PIC S9(5).\n       01  B       PIC S9(5).\n\u00a0\n       01  A-B-Sum PIC S9(5).\n\u00a0\n       PROCEDURE DIVISION.\n           ACCEPT A\n           ACCEPT B\n\u00a0\n           ADD A TO B GIVING A-B-Sum\n\u00a0\n           DISPLAY A-B-Sum\n\u00a0\n           GOBACK\n           .",
+    "label": 1
+  }
+]

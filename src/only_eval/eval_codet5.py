@@ -162,9 +162,8 @@ def run_evaluation():
                        output_path=f"{OUTPUT_DIR}/codet5/{code_set}_zero_shot.json")
 
         paths = [
-            "src/data/codeNet/python_cobol_test.json",
-            "src/data/codeNet/java_fortran_test.json",
-            "src/data/codeNet/js_pascal_test.json"
+            "src/data/codeNet/c_sharp_c_train.json",
+            "src/data/codeNet/c_sharp_c_test.json"
         ]
         support_dataset = load_multiple_datasets(paths)
 
