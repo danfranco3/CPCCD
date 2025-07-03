@@ -12,7 +12,7 @@ from code_clone_pkg.utils import extend_tokenizer_and_resize_model
 # Configuration
 MODEL_NAME = "Salesforce/codet5p-220m"
 OUTPUT_DIR = "results/eval"
-MAX_LENGTH = 1000
+MAX_LENGTH = 1024
 CLONE_DATASETS = [
     'python_cobol',
     'java_fortran',
