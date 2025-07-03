@@ -3,67 +3,53 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, random_split
-from transformers import AutoTokenizer, AutoModel, AdamW, get_scheduler
+from transformers import AutoTokenizer, AutoModel, get_scheduler
+from torch.optim import AdamW
 from sklearn.metrics import classification_report, accuracy_score
 import os
 from tqdm import tqdm
 
 from code_clone_pkg.data_utils import sample_few_shot_examples, load_multiple_datasets
 from code_clone_pkg.dataset import CodeCloneDataset
-from code_clone_pkg.prompts import few_shot_prompt
 
 # Configuration
 MODEL_NAME = "microsoft/codebert-base"
 OUTPUT_DIR = "results/codebert_finetune"
-MAX_LENGTH = 1400
+MAX_LENGTH = 512
 EPOCHS = 10
 BATCH_SIZE = 3
 LR = 2e-5
 THRESHOLD = 0.9
-CLONE_DATASETS = [
-    'python_cobol',
-    'java_fortran',
-    'js_pascal'
-]
-
+CLONE_DATASETS = ['python_cobol', 'java_fortran', 'js_pascal']
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Finetunable model with classification head
 class CodeBERTClassifier(nn.Module):
     def __init__(self, base_model_name):
         super().__init__()
         self.encoder = AutoModel.from_pretrained(base_model_name)
-        self.classifier = nn.Linear(self.encoder.config.hidden_size * 2, 2)  # binary classifier
+        self.classifier = nn.Linear(self.encoder.config.hidden_size * 2, 2)
 
     def forward(self, code1_inputs, code2_inputs):
-        out1 = self.encoder(**code1_inputs).last_hidden_state[:, 0]  # [CLS]
+        out1 = self.encoder(**code1_inputs).last_hidden_state[:, 0]
         out2 = self.encoder(**code2_inputs).last_hidden_state[:, 0]
         combined = torch.cat([out1, out2], dim=1)
         logits = self.classifier(combined)
         return logits
+
 
 def tokenize_pair(tokenizer, code1, code2):
     code1_inputs = tokenizer(code1, return_tensors="pt", max_length=MAX_LENGTH, truncation=True, padding='max_length')
     code2_inputs = tokenizer(code2, return_tensors="pt", max_length=MAX_LENGTH, truncation=True, padding='max_length')
     return {k: v.squeeze(0).to(device) for k, v in code1_inputs.items()}, {k: v.squeeze(0).to(device) for k, v in code2_inputs.items()}
 
-def get_mean_embedding(text, tokenizer, model):
-    encoded = tokenizer(
-        text,
-        return_tensors='pt',
-        max_length=MAX_LENGTH,
-        truncation=True,
-        padding='max_length'
-    ).to(device)
 
+def get_pair_embedding(code1, code2, tokenizer, model):
+    inputs1 = tokenizer(code1, return_tensors='pt', padding='max_length', truncation=True, max_length=MAX_LENGTH).to(device)
+    inputs2 = tokenizer(code2, return_tensors='pt', padding='max_length', truncation=True, max_length=MAX_LENGTH).to(device)
     with torch.no_grad():
-        output = model(**encoded)
-        token_embeddings = output.last_hidden_state
-        attention_mask = encoded['attention_mask'].unsqueeze(-1)
-        summed = (token_embeddings * attention_mask).sum(dim=1)
-        count = attention_mask.sum(dim=1)
-        mean_embedding = summed / count
-    return mean_embedding
+        h1 = model(**inputs1).last_hidden_state[:, 0]
+        h2 = model(**inputs2).last_hidden_state[:, 0]
+        return torch.cat([h1, h2], dim=-1)
 
 
 def finetune(model, tokenizer, train_dataset, val_dataset):
@@ -98,11 +84,9 @@ def finetune(model, tokenizer, train_dataset, val_dataset):
         avg_train_loss = total_loss / len(train_loader)
         print(f"[Epoch {epoch+1}] Train Loss: {avg_train_loss:.4f}")
 
-        # === Validation phase ===
         model.eval()
         val_loss = 0
-        val_preds = []
-        val_targets = []
+        val_preds, val_targets = [], []
 
         with torch.no_grad():
             for batch in val_loader:
@@ -118,9 +102,10 @@ def finetune(model, tokenizer, train_dataset, val_dataset):
                 val_targets.extend(labels.cpu().tolist())
 
         avg_val_loss = val_loss / len(val_loader)
-        val_accuracy = accuracy_score(val_targets, val_preds)
-        print(f"[Epoch {epoch+1}] Val Loss: {avg_val_loss:.4f}, Val Accuracy: {val_accuracy:.4f}")
+        val_acc = accuracy_score(val_targets, val_preds)
+        print(f"[Epoch {epoch+1}] Val Loss: {avg_val_loss:.4f}, Val Accuracy: {val_acc:.4f}")
 
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
     torch.save(model.state_dict(), os.path.join(OUTPUT_DIR, "codebert_finetuned.pt"))
 
 
@@ -129,10 +114,8 @@ def evaluate_model_cosine(model, tokenizer, test_examples, output_path):
     preds, targets, outputs = [], [], []
 
     for ex in test_examples:
-        emb1 = get_mean_embedding(ex["code1"], tokenizer, model.encoder)
-        emb2 = get_mean_embedding(ex["code2"], tokenizer, model.encoder)
-
-        sim = F.cosine_similarity(emb1, emb2).item()
+        emb1 = get_pair_embedding(ex["code1"], ex["code2"], tokenizer, model.encoder)
+        sim = F.cosine_similarity(emb1[:, :emb1.shape[1] // 2], emb1[:, emb1.shape[1] // 2:]).item()
         pred = 1 if sim >= THRESHOLD else 0
 
         preds.append(pred)
@@ -154,38 +137,41 @@ def evaluate_model_cosine(model, tokenizer, test_examples, output_path):
         json.dump(outputs, f, indent=2)
 
 
-def predict_one_or_two_shot(model, tokenizer, support_set, test_examples, code_set, output_path, shots=1):
+def predict_one_or_two_shot(model, tokenizer, support_set, test_examples, output_path, shots=1):
     model.eval()
     preds, targets, outputs = [], [], []
 
-    with torch.no_grad():
-        for i, ex in enumerate(test_examples):
-            if shots == 1:
-                support = sample_few_shot_examples(support_set, n=1, label=1, seed=i)
-            elif shots == 2:
-                support = sample_few_shot_examples(support_set, n=1, label=1, seed=i) + \
-                          sample_few_shot_examples(support_set, n=1, label=0, seed=i+100)
+    for i, ex in enumerate(test_examples):
+        if shots == 1:
+            support = sample_few_shot_examples(support_set, n=1, label=1, seed=i)
+        elif shots == 2:
+            support = sample_few_shot_examples(support_set, n=1, label=1, seed=i) + \
+                      sample_few_shot_examples(support_set, n=1, label=0, seed=i+100)
 
-            emb_ex = get_mean_embedding(ex["code1"] + ex["code2"], tokenizer, model.encoder)
+        query_emb = get_pair_embedding(ex["code1"], ex["code2"], tokenizer, model.encoder)
 
-            sims = []
-            for s in support:
-                emb_s = get_mean_embedding(s["code1"] + s["code2"], tokenizer, model.encoder)
-                sim = F.cosine_similarity(emb_ex, emb_s).item()
-                sims.append(sim)
+        # === Average similarity by class ===
+        sim_by_class = {0: [], 1: []}
+        for s in support:
+            support_emb = get_pair_embedding(s["code1"], s["code2"], tokenizer, model.encoder)
+            sim = F.cosine_similarity(query_emb, support_emb).item()
+            sim_by_class[s["label"]].append(sim)
 
-            avg_sim = sum(sims) / len(sims)
-            pred = 1 if avg_sim >= THRESHOLD else 0
+        avg_sim_0 = sum(sim_by_class[0]) / len(sim_by_class[0]) if sim_by_class[0] else -1
+        avg_sim_1 = sum(sim_by_class[1]) / len(sim_by_class[1]) if sim_by_class[1] else -1
 
-            preds.append(ex["label"])
-            targets.append(pred)
-            outputs.append({
-                "support_examples": support,
-                "query": ex,
-                "avg_similarity": avg_sim,
-                "pred_label": pred,
-                "true_label": ex["label"]
-            })
+        pred = 1 if avg_sim_1 > avg_sim_0 else 0
+
+        preds.append(pred)
+        targets.append(ex["label"])
+        outputs.append({
+            "support_examples": support,
+            "query": ex,
+            "avg_sim_class_0": avg_sim_0,
+            "avg_sim_class_1": avg_sim_1,
+            "pred_label": pred,
+            "true_label": ex["label"]
+        })
 
     print(f"\n{shots}-shot Evaluation:")
     print(classification_report(targets, preds, target_names=["Non-clone", "Clone"]))
@@ -204,8 +190,7 @@ def run():
         print(f"\n=== Running for dataset: {code_set} ===")
 
         train_dataset = CodeCloneDataset("src/data/combined_train.json", tokenizer, MAX_LENGTH)
-        test_path = f"src/data/rosetta/{code_set}_test.json"
-        with open(test_path) as f:
+        with open(f"src/data/rosetta/{code_set}_test.json") as f:
             test_examples = json.load(f)
 
         train_size = int(0.8 * len(train_dataset))
@@ -214,20 +199,11 @@ def run():
 
         finetune(model, tokenizer, train_data, val_data)
 
-        zero_shot_output = f"{OUTPUT_DIR}/{code_set}_zero_shot.json"
-        evaluate_model_cosine(model, tokenizer, test_examples, zero_shot_output)
+        evaluate_model_cosine(model, tokenizer, test_examples, f"{OUTPUT_DIR}/{code_set}_zero_shot.json")
 
-        support_paths = [
-            "src/data/codeNet/ruby_go_test.json",
-        ]
-        
-        support_set = load_multiple_datasets(support_paths)
-
-        one_shot_output = f"{OUTPUT_DIR}/{code_set}_one_shot.json"
-        predict_one_or_two_shot(model, tokenizer, support_set, test_examples, code_set, one_shot_output, shots=1)
-
-        two_shot_output = f"{OUTPUT_DIR}/{code_set}_two_shot.json"
-        predict_one_or_two_shot(model, tokenizer, support_set, test_examples, code_set, two_shot_output, shots=2)
+        support_set = load_multiple_datasets(["src/data/codeNet/ruby_go_test.json"])
+        predict_one_or_two_shot(model, tokenizer, support_set, test_examples, f"{OUTPUT_DIR}/{code_set}_one_shot.json", shots=1)
+        predict_one_or_two_shot(model, tokenizer, support_set, test_examples, f"{OUTPUT_DIR}/{code_set}_two_shot.json", shots=2)
 
 
 if __name__ == "__main__":
