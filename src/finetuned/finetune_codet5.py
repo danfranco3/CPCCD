@@ -13,7 +13,7 @@ from code_clone_pkg.utils import extend_tokenizer_and_resize_model
 MODEL_NAME = "Salesforce/codet5p-220m"
 OUTPUT_DIR = "results/finetune"
 MAX_LENGTH = 1400
-EPOCHS = 6
+EPOCHS = 10
 BATCH_SIZE = 3
 CLONE_DATASETS = [
     'python_cobol',

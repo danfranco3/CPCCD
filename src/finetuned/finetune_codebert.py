@@ -16,8 +16,8 @@ from code_clone_pkg.prompts import few_shot_prompt
 MODEL_NAME = "microsoft/codebert-base"
 OUTPUT_DIR = "results/codebert_finetune"
 MAX_LENGTH = 1400
-EPOCHS = 4
-BATCH_SIZE = 8
+EPOCHS = 10
+BATCH_SIZE = 3
 LR = 2e-5
 THRESHOLD = 0.9
 CLONE_DATASETS = [
