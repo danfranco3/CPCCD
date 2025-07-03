@@ -162,9 +162,9 @@ def run_evaluation():
                        output_path=f"{OUTPUT_DIR}/codet5/{code_set}_zero_shot.json")
 
         paths = [
-            "src/data/codeNet/c_sharp_c_train.json",
-            "src/data/codeNet/c_sharp_c_test.json"
+            "src/data/codeNet/ruby_go_test.json",
         ]
+        
         support_dataset = load_multiple_datasets(paths)
 
         eval_one_shot(code_set, support_dataset, test_examples, model, tokenizer, neg=False)

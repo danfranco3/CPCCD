@@ -6,7 +6,8 @@ paths = [
     "src/data/codeNet/js_pascal_train.json",
     "src/data/rosetta/python_cobol_train.json",
     "src/data/rosetta/java_fortran_train.json",
-    "src/data/rosetta/js_pascal_train.json"
+    "src/data/rosetta/js_pascal_train.json",
+    "src/data/codeNet/ruby_go_train.json"
 ]
 
 combined = []

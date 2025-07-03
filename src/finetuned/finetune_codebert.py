@@ -218,8 +218,7 @@ def run():
         evaluate_model_cosine(model, tokenizer, test_examples, zero_shot_output)
 
         support_paths = [
-            "src/data/codeNet/c_sharp_c_train.json",
-            "src/data/codeNet/c_sharp_c_test.json"
+            "src/data/codeNet/ruby_go_test.json",
         ]
         
         support_set = load_multiple_datasets(support_paths)

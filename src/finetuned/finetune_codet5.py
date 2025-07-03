@@ -223,8 +223,7 @@ def run():
         evaluate_model(model, tokenizer, test_dataset, test_examples, output_path)
 
         paths = [
-            "src/data/codeNet/c_sharp_c_train.json",
-            "src/data/codeNet/c_sharp_c_test.json"
+            "src/data/codeNet/ruby_go_test.json",
         ]
         
         support_dataset = load_multiple_datasets(paths)

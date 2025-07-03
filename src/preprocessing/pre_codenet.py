@@ -175,11 +175,11 @@ def main():
     )
     save_dataset(train_df, test_df, 'js_pascal', data_folder='codeNet')
     
-    code1_df, code2_df = stream_and_match_both(DS_NAME, "C#", "C", max_code_len=MAX_LENGTH, max_matches=MAX_MATCHES)
+    code1_df, code2_df = stream_and_match_both(DS_NAME, "Ruby", "Go", max_code_len=MAX_LENGTH, max_matches=MAX_MATCHES)
     train_df, test_df = create_balanced_clone_dataset_with_test_limit(
         code1_df, code2_df, max_test_matches=MAX_TEST_MATCHES
     )
-    save_dataset(train_df, test_df, 'c_sharp_c', data_folder='codeNet')
+    save_dataset(train_df, test_df, 'ruby_go', data_folder='codeNet')
     
     
 if __name__ == "__main__":
