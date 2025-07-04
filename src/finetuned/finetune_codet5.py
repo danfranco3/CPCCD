@@ -14,10 +14,10 @@ from code_clone_pkg.dataset import CodeCloneDataset
 
 # CONFIG
 MODEL_NAME   = "Salesforce/codet5p-220m"
-OUTPUT_DIR   = "results/finetune_cls"
+OUTPUT_DIR   = "results/codetp5"
 MAX_LENGTH   = 512
 EPOCHS       = 8
-BATCH_SIZE   = 2
+BATCH_SIZE   = 1
 CLONE_DATASETS = [
     "python_cobol",
     "java_fortran",
@@ -42,7 +42,7 @@ def compute_metrics(eval_pred):
 
 
 # EVALUATION
-def evaluate_model(model, tokenizer, test_dataset, raw_examples, output_path):
+def evaluate_model(model, test_dataset, raw_examples, output_path):
     model.eval()
     preds, targets = [], []
     outputs = []
@@ -131,7 +131,7 @@ def run():
             raw = json.load(f)
 
         out_path = f"{OUTPUT_DIR}/codet5p_cls/{code_set}_eval.json"
-        evaluate_model(model, tokenizer, test_ds, raw, out_path)
+        evaluate_model(model, test_ds, raw, out_path)
 
 
 if __name__ == "__main__":
