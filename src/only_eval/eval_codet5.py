@@ -27,22 +27,19 @@ def predict(prompt, model, tokenizer):
     outputs = model.generate(
         **inputs,
         max_new_tokens=3,
-        temperature=0.0,
         do_sample=False,
         num_beams=1,
-        early_stopping=True,
         eos_token_id=tokenizer.eos_token_id or tokenizer.convert_tokens_to_ids(["</s>"])[0],
     )
 
     decoded = tokenizer.decode(outputs[0], skip_special_tokens=True).strip().lower()
 
-    # Just return "yes" or "no" if possible
     if "yes" in decoded:
         return "Yes"
     elif "no" in decoded:
         return "No"
     else:
-        return decoded  # fallback (can help debug edge cases)
+        return decoded  # fallback
 
 
 def evaluate_model(model, tokenizer, test_data, raw_examples, output_path):
