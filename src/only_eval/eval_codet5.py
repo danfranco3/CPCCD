@@ -1,191 +1,92 @@
 import json
+import os
 import torch
-from torch.utils.data import DataLoader
+import torch.nn.functional as F
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 from sklearn.metrics import classification_report, accuracy_score
-import os
-from code_clone_pkg.data_utils import sample_few_shot_examples, load_multiple_datasets
-from code_clone_pkg.dataset import CodeCloneDataset
-from code_clone_pkg.prompts import few_shot_prompt
-from code_clone_pkg.utils import extend_tokenizer_and_resize_model
+from code_clone_pkg.data_utils import load_multiple_datasets, sample_few_shot_examples
 
-# Configuration
+# CONFIG
 MODEL_NAME = "Salesforce/codet5p-220m"
-OUTPUT_DIR = "results/eval"
-MAX_LENGTH = 1024
-CLONE_DATASETS = [
-    'python_cobol',
-    'java_fortran',
-    'js_pascal'
-]
+MAX_LENGTH = 512
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+CLONE_DATASETS = ["python_cobol", "java_fortran", "js_pascal"]
+SUPPORT_PATHS = ["src/data/codeNet/ruby_go_test.json"]
+OUTPUT_DIR = "results/similarity_eval"
+THRESHOLD = 0.85  # Cosine similarity threshold
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# Load model and tokenizer 
+print("Loading model...")
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME).to(DEVICE)
+encoder = model.get_encoder()
+model.eval()
 
-def predict(prompt, model, tokenizer):
-    inputs = tokenizer(prompt, return_tensors="pt", truncation=True, padding=True, max_length=MAX_LENGTH).to(model.device)
-
-    outputs = model.generate(
-        **inputs,
-        max_new_tokens=3,
-        do_sample=False,
-        num_beams=1,
-        eos_token_id=tokenizer.eos_token_id or tokenizer.convert_tokens_to_ids(["</s>"])[0],
-    )
-
-    decoded = tokenizer.decode(outputs[0], skip_special_tokens=True).strip().lower()
-
-    if "yes" in decoded:
-        return "Yes"
-    elif "no" in decoded:
-        return "No"
-    else:
-        return decoded  # fallback
-
-
-def evaluate_model(model, tokenizer, test_data, raw_examples, output_path):
-    model.eval()
-    preds = []
-    targets = []
-    outputs = []
-
-    loader = DataLoader(test_data, batch_size=1)
-
+# Embed code
+def embed_code(code: str) -> torch.Tensor:
+    tokens = tokenizer(
+        code,
+        truncation=True,
+        padding="max_length",
+        max_length=MAX_LENGTH,
+        return_tensors="pt"
+    ).to(DEVICE)
     with torch.no_grad():
-        for i, batch in enumerate(loader):
-            input_ids = batch["input_ids"].to(device)
-            attention_mask = batch["attention_mask"].to(device)
-            labels = batch["labels"].to(device)
+        hidden = encoder(**tokens).last_hidden_state  # (1, seq_len, hidden_size)
+    return hidden[:, 0, :]  # use first token (like [CLS]) → shape: (1, hidden_size)
 
-            generated_ids = model.generate(input_ids=input_ids, attention_mask=attention_mask, max_new_tokens=10)
+# Zero-shot evaluation 
+def evaluate_zero_shot(test_examples, dataset_name):
+    preds, targets = [], []
+    for ex in test_examples:
+        emb1 = embed_code(ex["code1"])
+        emb2 = embed_code(ex["code2"])
+        sim = F.cosine_similarity(emb1, emb2).item()
+        pred = 1 if sim >= THRESHOLD else 0
+        preds.append(pred)
+        targets.append(ex["label"])
+    report_results(targets, preds, f"{dataset_name}_zero_shot")
 
-            pred = tokenizer.decode(generated_ids[0], skip_special_tokens=True).strip().lower()
-            true = tokenizer.decode(labels[0], skip_special_tokens=True).strip().lower()
+# Few-shot (1 or 2) using prototype averaging 
+def evaluate_few_shot(test_examples, support_set, dataset_name, shots=1):
+    preds, targets = [], []
+    # Create average embedding (prototype) for each class
+    prototypes = {}
+    for label in [0, 1]:
+        support = sample_few_shot_examples(support_set, n=shots, label=label, seed=42)
+        support_embs = [embed_code(s["code1"] + "\n" + s["code2"]) for s in support]
+        prototypes[label] = torch.stack(support_embs).mean(dim=0)  # shape: (hidden_size)
 
-            pred_label = 1 if 'yes' in pred else 0
-            true_label = 1 if 'yes' in true else 0
+    for ex in test_examples:
+        query = embed_code(ex["code1"] + "\n" + ex["code2"])  # (1, hidden_size)
+        sims = {l: F.cosine_similarity(query, prototypes[l].unsqueeze(0)).item() for l in [0, 1]}
+        pred = 1 if sims[1] > sims[0] else 0
+        preds.append(pred)
+        targets.append(ex["label"])
+    report_results(targets, preds, f"{dataset_name}_{shots}shot")
 
-            preds.append(pred_label)
-            targets.append(true_label)
+# Print + save metrics 
+def report_results(y_true, y_pred, tag):
+    print(f"\nEvaluation: {tag}")
+    print(classification_report(y_true, y_pred, target_names=["Non-clone", "Clone"]))
+    print(f"Accuracy: {accuracy_score(y_true, y_pred):.4f}")
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    with open(os.path.join(OUTPUT_DIR, f"{tag}.json"), "w") as f:
+        json.dump({"preds": y_pred, "targets": y_true}, f)
 
-            outputs.append({
-                "code1": raw_examples[i]["code1"],
-                "code2": raw_examples[i]["code2"],
-                "model_output": pred,
-                "pred_label": pred_label,
-                "true_label": true_label
-            })
-
-    print("\nZero-Shot Evaluation:")
-    print(classification_report(targets, preds, target_names=["Non-clone", "Clone"]))
-    print(f"Accuracy: {accuracy_score(targets, preds):.4f}")
-
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    with open(output_path, "w") as f:
-        json.dump(outputs, f, indent=2)
-    print(f"Saved to {output_path}")
-
-def eval_one_shot(code_set, support_dataset, test_examples, model, tokenizer, neg=False):
-    targets, preds, outputs = [], [], []
-
-    with torch.no_grad():
-        for i, ex in enumerate(test_examples):
-            few_shot_support = sample_few_shot_examples(
-                support_dataset, n=1, label=0 if neg else 1, seed=i + (100 if neg else 0)
-            )
-            prompt = few_shot_prompt(few_shot_support, ex)
-            output_text = predict(prompt, model, tokenizer)
-            pred_label = 1 if 'yes' in output_text.strip().lower() else 0
-
-            targets.append(ex["label"])
-            preds.append(pred_label)
-            outputs.append({
-                "input": prompt,
-                "prediction": output_text,
-                "pred_label": pred_label,
-                "true_label": ex["label"],
-                "code1": ex.get("code1"),
-                "code2": ex.get("code2"),
-            })
-
-    mode = 'Negative' if neg else 'Positive'
-    print(f"\n{mode} One-Shot Evaluation:")
-    print(classification_report(targets, preds, target_names=["Non-clone", "Clone"]))
-    print(f"Accuracy: {accuracy_score(targets, preds):.4f}")
-
-    suffix = "neg" if neg else "pos"
-    output_path = f"{OUTPUT_DIR}/codet5/{code_set}_{suffix}_one_shot.json"
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    with open(output_path, "w") as f:
-        json.dump(outputs, f, indent=2)
-    print(f"Saved to {output_path}")
-
-def eval_two_shot(code_set, support_dataset, test_examples, model, tokenizer):
-    targets, preds, outputs = [], [], []
-
-    with torch.no_grad():
-        for i, ex in enumerate(test_examples):
-            few_shot_support = (
-                sample_few_shot_examples(support_dataset, n=1, label=1, seed=i) +
-                sample_few_shot_examples(support_dataset, n=1, label=0, seed=i + 100)
-            )
-            prompt = few_shot_prompt(few_shot_support, ex)
-            output_text = predict(prompt, model, tokenizer)
-            pred_label = 1 if 'yes' in output_text.strip().lower() else 0
-
-            targets.append(ex["label"])
-            preds.append(pred_label)
-            outputs.append({
-                "input": prompt,
-                "prediction": output_text,
-                "pred_label": pred_label,
-                "true_label": ex["label"],
-                "code1": ex.get("code1"),
-                "code2": ex.get("code2"),
-            })
-
-    print("\nTwo-Shot Evaluation:")
-    print(classification_report(targets, preds, target_names=["Non-clone", "Clone"]))
-    print(f"Accuracy: {accuracy_score(targets, preds):.4f}")
-
-    output_path = f"{OUTPUT_DIR}/codet5/{code_set}_few_shot.json"
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    with open(output_path, "w") as f:
-        json.dump(outputs, f, indent=2)
-    print(f"Saved to {output_path}")
-
-def run_evaluation():
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
+# Main
+def main():
+    support_set = load_multiple_datasets(SUPPORT_PATHS)
 
     for code_set in CLONE_DATASETS:
-        print(f"\n=== Evaluating on dataset: {code_set} ===")
         test_path = f"src/data/rosetta/{code_set}_test.json"
-        test_dataset = CodeCloneDataset(test_path, tokenizer, MAX_LENGTH)
-
         with open(test_path) as f:
             test_examples = json.load(f)
 
-        model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME, trust_remote_code=True).to(device)
-        if torch.cuda.is_available():
-            model.gradient_checkpointing_enable()
-
-        tokenizer, model = extend_tokenizer_and_resize_model(
-            model,
-            tokenizer,
-            custom_tokenizer_path="bpe_cobol_fortran_pascal.json"
-        )
-
-        evaluate_model(model, tokenizer, test_dataset, test_examples,
-                       output_path=f"{OUTPUT_DIR}/codet5/{code_set}_zero_shot.json")
-
-        paths = [
-            "src/data/codeNet/ruby_go_test.json",
-        ]
-        
-        support_dataset = load_multiple_datasets(paths)
-
-        eval_one_shot(code_set, support_dataset, test_examples, model, tokenizer, neg=False)
-        eval_one_shot(code_set, support_dataset, test_examples, model, tokenizer, neg=True)
-        eval_two_shot(code_set, support_dataset, test_examples, model, tokenizer)
+        print(f"\nDataset: {code_set}")
+        evaluate_zero_shot(test_examples, code_set)
+        evaluate_few_shot(test_examples, support_set, code_set, shots=1)
+        evaluate_few_shot(test_examples, support_set, code_set, shots=2)
 
 if __name__ == "__main__":
-    run_evaluation()
+    main()

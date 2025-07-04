@@ -1,89 +1,71 @@
 import json
 import torch
 from torch.utils.data import DataLoader, random_split
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, Seq2SeqTrainer, Seq2SeqTrainingArguments, DataCollatorForSeq2Seq
+from transformers import (
+    AutoTokenizer,
+    AutoModelForSequenceClassification,
+    Trainer,
+    TrainingArguments
+)
 from sklearn.metrics import classification_report, accuracy_score
 import os
-from code_clone_pkg.data_utils import sample_few_shot_examples, load_multiple_datasets
+
 from code_clone_pkg.dataset import CodeCloneDataset
-from code_clone_pkg.prompts import few_shot_prompt
-from code_clone_pkg.utils import extend_tokenizer_and_resize_model
 
-# Configuration
-MODEL_NAME = "Salesforce/codet5p-220m"
-OUTPUT_DIR = "results/finetune"
-MAX_LENGTH = 1024
-EPOCHS = 8
-BATCH_SIZE = 2
+# CONFIG
+MODEL_NAME   = "Salesforce/codet5p-220m"
+OUTPUT_DIR   = "results/finetune_cls"
+MAX_LENGTH   = 512
+EPOCHS       = 8
+BATCH_SIZE   = 8
 CLONE_DATASETS = [
-    'python_cobol',
-    'java_fortran',
-    'js_pascal'
+    "python_cobol",
+    "java_fortran",
+    "js_pascal"
 ]
-
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-use_fp16 = torch.cuda.is_available()
-
-def predict(prompt, model, tokenizer):
-    inputs = tokenizer(prompt, return_tensors="pt", truncation=True, padding=True, max_length=MAX_LENGTH).to(model.device)
-
-    outputs = model.generate(
-        **inputs,
-        max_new_tokens=3,
-        do_sample=False,
-        num_beams=1,
-        eos_token_id=tokenizer.eos_token_id or tokenizer.convert_tokens_to_ids(["</s>"])[0],
-    )
-
-    decoded = tokenizer.decode(outputs[0], skip_special_tokens=True).strip().lower()
-
-    if "yes" in decoded:
-        return "Yes"
-    elif "no" in decoded:
-        return "No"
-    else:
-        return decoded  # fallback
 
 
+# METRICS 
+def compute_metrics(eval_pred):
+    logits, labels = eval_pred
+    preds = logits.argmax(axis=1)
+    acc = accuracy_score(labels, preds)
+    report = classification_report(labels, preds, target_names=["Non-clone","Clone"], output_dict=True, zero_division=0)
+    # return overall plus clone-class metrics
+    return {
+        "accuracy": acc,
+        "precision_clone": report["Clone"]["precision"],
+        "recall_clone":    report["Clone"]["recall"],
+        "f1_clone":        report["Clone"]["f1-score"],
+    }
 
-def predict_few_shot(example_pairs, target_pair, model, tokenizer):
-    prompt = few_shot_prompt(example_pairs, target_pair)
-    return predict(prompt, model, tokenizer)
 
-def evaluate_model(model, tokenizer, test_data, raw_examples, output_path):
+# EVALUATION
+def evaluate_model(model, tokenizer, test_dataset, raw_examples, output_path):
     model.eval()
-    preds = []
-    targets = []
+    preds, targets = [], []
     outputs = []
-
-    loader = DataLoader(test_data, batch_size=1)
+    loader = DataLoader(test_dataset, batch_size=1)
 
     with torch.no_grad():
         for i, batch in enumerate(loader):
-            input_ids = batch["input_ids"].to(device)
-            attention_mask = batch["attention_mask"].to(device)
-            labels = batch["labels"].to(device)
-            generated_ids = model.generate(input_ids=input_ids, attention_mask=attention_mask, max_new_tokens=10)
-
-            pred = tokenizer.decode(generated_ids[0], skip_special_tokens=True).strip().lower()
-            true = tokenizer.decode(labels[0], skip_special_tokens=True).strip().lower()
-
-            pred_label = 1 if 'yes' in pred else 0
-            true_label = 1 if 'yes' in true else 0
+            batch = {k:v.to(device) for k,v in batch.items()}
+            logits = model(**batch).logits
+            pred_label = logits.argmax(dim=1).item()
+            true_label = batch["labels"].item()
 
             preds.append(pred_label)
             targets.append(true_label)
-
             outputs.append({
-                "code1": raw_examples[i]["code1"],
-                "code2": raw_examples[i]["code2"],
-                "model_output": pred,
+                "code1":      raw_examples[i]["code1"],
+                "code2":      raw_examples[i]["code2"],
                 "pred_label": pred_label,
                 "true_label": true_label
             })
 
     print("\nEvaluation Results:")
-    print(classification_report(targets, preds, target_names=["Non-clone", "Clone"]))
+    print(classification_report(targets, preds, target_names=["Non-clone","Clone"], zero_division=0))
     print(f"Accuracy: {accuracy_score(targets, preds):.4f}")
 
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
@@ -91,167 +73,64 @@ def evaluate_model(model, tokenizer, test_data, raw_examples, output_path):
         json.dump(outputs, f, indent=2)
     print(f"Detailed results saved to {output_path}")
 
-def eval_two_shot(code_set, support_dataset, test_examples, model, tokenizer):
-    targets = []
-    preds = []
-    outputs = []  # to save detailed info for later
 
-    with torch.no_grad():
-        for i, ex in enumerate(test_examples):
-            # Sample few-shot support as you do
-            few_shot_support = (
-                sample_few_shot_examples(support_dataset, n=1, label=1, seed=i) +
-                sample_few_shot_examples(support_dataset, n=1, label=0, seed=i + 100)
-            )
-
-            prompt = few_shot_prompt(few_shot_support, ex)
-
-            output_text = predict(prompt, model, tokenizer)
-
-            pred_label = 1 if 'yes' in output_text.strip().lower() else 0
-
-            targets.append(ex["label"])
-            preds.append(pred_label)
-
-            outputs.append({
-                "input": prompt,
-                "prediction": output_text,
-                "pred_label": pred_label,
-                "true_label": ex["label"],
-                "code1": ex.get("code1"),
-                "code2": ex.get("code2"),
-            })
-
-    # After all examples, print metrics
-    print("\nEvaluation Results for Few-Shot:")
-    print(classification_report(targets, preds, target_names=["Non-clone", "Clone"]))
-    print(f"Accuracy: {accuracy_score(targets, preds):.4f}")
-
-    # Save detailed results to JSON file
-    output_path = f"{OUTPUT_DIR}/codet5/{code_set}_few_shot.json"
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    with open(output_path, "w") as f:
-        json.dump(outputs, f, indent=2)
-    print(f"Detailed results saved to {output_path}")
-    
-def eval_one_shot(code_set, support_dataset, test_examples, model, tokenizer, neg=False):
-    targets = []
-    preds = []
-    outputs = []  # to save detailed info for later
-
-    with torch.no_grad():
-        for i, ex in enumerate(test_examples):
-            if neg:
-                few_shot_support = sample_few_shot_examples(support_dataset, n=1, label=0, seed=i + 100)
-            else:
-                few_shot_support = sample_few_shot_examples(support_dataset, n=1, label=1, seed=i)
-
-            prompt = few_shot_prompt(few_shot_support, ex)
-
-            output_text = predict(prompt, model, tokenizer)
-
-            pred_label = 1 if 'yes' in output_text.strip().lower() else 0
-
-            targets.append(ex["label"])
-            preds.append(pred_label)
-
-            outputs.append({
-                "input": prompt,
-                "prediction": output_text,
-                "pred_label": pred_label,
-                "true_label": ex["label"],
-                "code1": ex.get("code1"),
-                "code2": ex.get("code2"),
-            })
-
-    # After all examples, print metrics
-    print(f"\nEvaluation Results for {'Negative' if neg else 'Positive'} One-Shot:")
-    print(classification_report(targets, preds, target_names=["Non-clone", "Clone"]))
-    print(f"Accuracy: {accuracy_score(targets, preds):.4f}")
-
-    # Save detailed results to JSON file
-    output_path = f"{OUTPUT_DIR}/codet5/{code_set}_{'neg' if neg else 'pos'}_one_shot.json"
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    with open(output_path, "w") as f:
-        json.dump(outputs, f, indent=2)
-    print(f"Detailed results saved to {output_path}")
-    
-
+# MAIN
 def run():
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, trust_remote_code=True)
+    # Load tokenizer & model (classification head attached)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+    model = AutoModelForSequenceClassification.from_pretrained(
+        MODEL_NAME,
+        num_labels=2,
+    ).to(device)
 
-    train_path = "src/data/combined_train.json"
-    train_dataset = CodeCloneDataset(train_path, tokenizer, MAX_LENGTH)
-
-    train_size = int(len(train_dataset) * 0.8)
-    val_size = len(train_dataset) - train_size
-    train_dataset, val_dataset = random_split(train_dataset, [train_size, val_size], generator=torch.Generator().manual_seed(42))
-
-    model = AutoModelForSeq2SeqLM.from_pretrained(MODEL_NAME, trust_remote_code=True).to(device)
-    if torch.cuda.is_available():
-        model.gradient_checkpointing_enable()
-        
-    tokenizer, model = extend_tokenizer_and_resize_model(
-        model,
-        tokenizer,
-        custom_tokenizer_path="bpe_cobol_fortran_pascal.json"
+    # Prepare datasets
+    train_full = CodeCloneDataset("src/data/combined_train.json", tokenizer, MAX_LENGTH)
+    train_size = int(0.8 * len(train_full))
+    val_size   = len(train_full) - train_size
+    train_ds, val_ds = random_split(
+        train_full, [train_size, val_size],
+        generator=torch.Generator().manual_seed(42)
     )
 
-    data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, model=model, padding=True, return_tensors="pt")
-
-    training_args = Seq2SeqTrainingArguments(
-        output_dir=f"{OUTPUT_DIR}",
-        eval_strategy="epoch",
+    # Training arguments
+    training_args = TrainingArguments(
+        output_dir=OUTPUT_DIR,
+        evaluation_strategy="epoch",
         save_strategy="epoch",
         learning_rate=5e-5,
         per_device_train_batch_size=BATCH_SIZE,
         per_device_eval_batch_size=BATCH_SIZE,
         num_train_epochs=EPOCHS,
         weight_decay=0.01,
-        eval_accumulation_steps=4,
-        gradient_accumulation_steps=16,
-        predict_with_generate=True,
         logging_dir=f"{OUTPUT_DIR}/logs",
         load_best_model_at_end=True,
-        fp16=use_fp16,
-        no_cuda=not torch.cuda.is_available(),
+        fp16=torch.cuda.is_available(),
     )
 
-    trainer = Seq2SeqTrainer(
+    # Trainer
+    trainer = Trainer(
         model=model,
         args=training_args,
-        train_dataset=train_dataset,
-        eval_dataset=val_dataset,
+        train_dataset=train_ds,
+        eval_dataset=val_ds,
         tokenizer=tokenizer,
-        data_collator=data_collator
+        compute_metrics=compute_metrics,
     )
 
+    # Fine-tune
     trainer.train()
-    trainer.save_model(f"{OUTPUT_DIR}/codet5")
+    trainer.save_model(f"{OUTPUT_DIR}/codet5p_cls")
 
+    # Evaluate on each test set
     for code_set in CLONE_DATASETS:
-        print(f"\n=== Running for dataset: {code_set} ===")
-        
+        print(f"\n=== Evaluating on {code_set} ===")
         test_path = f"src/data/rosetta/{code_set}_test.json"
-        test_dataset = CodeCloneDataset(test_path, tokenizer, MAX_LENGTH)
-
+        test_ds = CodeCloneDataset(test_path, tokenizer, MAX_LENGTH)
         with open(test_path) as f:
-            test_examples = json.load(f)
+            raw = json.load(f)
 
-        output_path = f"{OUTPUT_DIR}/codet5/{code_set}_zero_shot.json"
-        evaluate_model(model, tokenizer, test_dataset, test_examples, output_path)
-
-        paths = [
-            "src/data/codeNet/ruby_go_test.json",
-        ]
-        
-        support_dataset = load_multiple_datasets(paths)
-        
-        eval_one_shot(code_set, support_dataset, test_examples, model, tokenizer, False)
-        eval_one_shot(code_set, support_dataset, test_examples, model, tokenizer, True)
-
-        eval_two_shot(code_set, support_dataset, test_examples, model, tokenizer)
-        
+        out_path = f"{OUTPUT_DIR}/codet5p_cls/{code_set}_eval.json"
+        evaluate_model(model, tokenizer, test_ds, raw, out_path)
 
 
 if __name__ == "__main__":
