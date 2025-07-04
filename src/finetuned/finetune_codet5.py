@@ -28,7 +28,9 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # METRICS 
 def compute_metrics(eval_pred):
-    logits, labels = eval_pred
+    logits, labels = eval_preds
+    if isinstance(logits, tuple):
+        logits = logits[0]
     preds = logits.argmax(axis=1)
     acc = accuracy_score(labels, preds)
     report = classification_report(labels, preds, target_names=["Non-clone","Clone"], output_dict=True, zero_division=0)
