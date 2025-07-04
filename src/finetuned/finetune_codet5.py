@@ -28,7 +28,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # METRICS 
 def compute_metrics(eval_pred):
-    logits, labels = eval_preds
+    logits, labels = eval_pred
     if isinstance(logits, tuple):
         logits = logits[0]
     preds = logits.argmax(axis=1)
