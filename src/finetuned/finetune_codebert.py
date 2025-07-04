@@ -194,7 +194,7 @@ def run():
     for code_set in CLONE_DATASETS:
         print(f"\n=== Running for dataset: {code_set} ===")
 
-        train_dataset = CodeCloneDataset("src/data/combined_train.json", tokenizer, MAX_LENGTH)
+        train_dataset = CodeCloneDataset("src/data/combined_train.json", tokenizer, MAX_LENGTH, seq=False)
         with open(f"src/data/rosetta/{code_set}_test.json") as f:
             test_examples = json.load(f)
 
