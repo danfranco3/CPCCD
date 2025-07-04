@@ -17,7 +17,7 @@ MODEL_NAME   = "Salesforce/codet5p-220m"
 OUTPUT_DIR   = "results/finetune_cls"
 MAX_LENGTH   = 512
 EPOCHS       = 8
-BATCH_SIZE   = 8
+BATCH_SIZE   = 2
 CLONE_DATASETS = [
     "python_cobol",
     "java_fortran",
@@ -104,6 +104,7 @@ def run():
         weight_decay=0.01,
         logging_dir=f"{OUTPUT_DIR}/logs",
         load_best_model_at_end=True,
+        gradient_accumulation_steps=16,
         fp16=torch.cuda.is_available(),
     )
 

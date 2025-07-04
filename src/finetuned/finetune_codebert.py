@@ -65,7 +65,7 @@ def finetune(model, train_dataset, val_dataset):
         model.train()
         total_loss = 0
         
-        accumulation_steps = 16
+        accumulation_steps = 16 # gradient accumulation
 
         for i, batch in tqdm(enumerate(train_loader), desc=f"Epoch {epoch+1}"):
             input_ids = batch['input_ids'].to(device)
