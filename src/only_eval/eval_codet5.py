@@ -59,7 +59,7 @@ def evaluate_few_shot(test_examples, support_set, dataset_name, shots=1):
 
     for ex in test_examples:
         query = embed_code(ex["code1"] + "\n" + ex["code2"])  # (1, hidden_size)
-        sims = {l: F.cosine_similarity(query, prototypes[l].unsqueeze(0)).item() for l in [0, 1]}
+        sims = {l: F.cosine_similarity(query, prototypes[l], dim=0).item() for l in [0, 1]}
         pred = 1 if sims[1] > sims[0] else 0
         preds.append(pred)
         targets.append(ex["label"])
