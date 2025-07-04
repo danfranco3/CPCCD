@@ -15,7 +15,6 @@ class CodeCloneDataset(Dataset):
         
         self.tokenizer = tokenizer
         self.max_length = max_length
-        self.seq = seq
 
     def __len__(self):
         return len(self.data)
