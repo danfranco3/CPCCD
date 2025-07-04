@@ -23,8 +23,27 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def predict(prompt, model, tokenizer):
     inputs = tokenizer(prompt, return_tensors="pt", truncation=True, padding=True, max_length=MAX_LENGTH).to(model.device)
-    outputs = model.generate(**inputs, max_new_tokens=10)
-    return tokenizer.decode(outputs[0], skip_special_tokens=True).strip()
+
+    outputs = model.generate(
+        **inputs,
+        max_new_tokens=3,
+        temperature=0.0,
+        do_sample=False,
+        num_beams=1,
+        early_stopping=True,
+        eos_token_id=tokenizer.eos_token_id or tokenizer.convert_tokens_to_ids(["</s>"])[0],
+    )
+
+    decoded = tokenizer.decode(outputs[0], skip_special_tokens=True).strip().lower()
+
+    # Just return "yes" or "no" if possible
+    if "yes" in decoded:
+        return "Yes"
+    elif "no" in decoded:
+        return "No"
+    else:
+        return decoded  # fallback (can help debug edge cases)
+
 
 def evaluate_model(model, tokenizer, test_data, raw_examples, output_path):
     model.eval()
