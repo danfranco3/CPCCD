@@ -10,81 +10,87 @@ from transformers import (
 from sklearn.metrics import classification_report, accuracy_score
 import os
 
+from code_clone_pkg.data_utils import load_multiple_datasets, sample_few_shot_examples
 from code_clone_pkg.dataset import CodeCloneDataset
+SUPPORT_PATHS = ["src/data/codeNet/ruby_go_test.json"]
 
 # CONFIG
 MODEL_NAME   = "Salesforce/codet5p-220m"
 OUTPUT_DIR   = "results/codetp5"
 MAX_LENGTH   = 512
 EPOCHS       = 8
+THRESHOLD = 0.85  # Cosine similarity threshold
 BATCH_SIZE   = 1
 CLONE_DATASETS = [
     "python_cobol",
     "java_fortran",
     "js_pascal"
 ]
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+model = AutoModelForSequenceClassification.from_pretrained(
+    MODEL_NAME,
+    num_labels=2,
+).to(DEVICE)
 
-# METRICS 
-def compute_metrics(eval_pred):
-    logits, labels = eval_pred
-    if isinstance(logits, tuple):
-        logits = logits[0]
-    preds = logits.argmax(axis=1)
-    acc = accuracy_score(labels, preds)
-    report = classification_report(labels, preds, target_names=["Non-clone","Clone"], output_dict=True, zero_division=0)
-    # return overall plus clone-class metrics
-    return {
-        "accuracy": acc,
-        "precision_clone": report["Clone"]["precision"],
-        "recall_clone":    report["Clone"]["recall"],
-        "f1_clone":        report["Clone"]["f1-score"],
-    }
+encoder = model.get_encoder()
 
-
-# EVALUATION
-def evaluate_model(model, test_dataset, raw_examples, output_path):
-    model.eval()
-    preds, targets = [], []
-    outputs = []
-    loader = DataLoader(test_dataset, batch_size=1)
-
+# Embed code
+def embed_code(code: str) -> torch.Tensor:
+    tokens = tokenizer(
+        code,
+        truncation=True,
+        padding="max_length",
+        max_length=MAX_LENGTH,
+        return_tensors="pt"
+    ).to(DEVICE)
     with torch.no_grad():
-        for i, batch in enumerate(loader):
-            batch = {k:v.to(device) for k,v in batch.items()}
-            logits = model(**batch).logits
-            pred_label = logits.argmax(dim=1).item()
-            true_label = batch["labels"].item()
+        hidden = encoder(**tokens).last_hidden_state  # (1, seq_len, hidden_size)
+    return hidden[:, 0, :]  # use first token (like [CLS]) → shape: (1, hidden_size)
 
-            preds.append(pred_label)
-            targets.append(true_label)
-            outputs.append({
-                "code1":      raw_examples[i]["code1"],
-                "code2":      raw_examples[i]["code2"],
-                "pred_label": pred_label,
-                "true_label": true_label
-            })
+# Zero-shot evaluation 
+def evaluate_zero_shot(test_examples, dataset_name):
+    preds, targets = [], []
+    for ex in test_examples:
+        emb1 = embed_code(ex["code1"])
+        emb2 = embed_code(ex["code2"])
+        sim = F.cosine_similarity(emb1, emb2).item()
+        pred = 1 if sim >= THRESHOLD else 0
+        preds.append(pred)
+        targets.append(ex["label"])
+    report_results(targets, preds, f"{dataset_name}_zero_shot")
 
-    print("\nEvaluation Results:")
-    print(classification_report(targets, preds, target_names=["Non-clone","Clone"], zero_division=0))
-    print(f"Accuracy: {accuracy_score(targets, preds):.4f}")
+# Few-shot (1 or 2) using prototype averaging 
+def evaluate_few_shot(test_examples, support_set, dataset_name, shots=1):
+    preds, targets = [], []
+    # Create average embedding (prototype) for each class
+    prototypes = {}
+    for label in [0, 1]:
+        support = sample_few_shot_examples(support_set, n=shots, label=label, seed=42)
+        support_embs = [embed_code(s["code1"] + "\n" + s["code2"]) for s in support]
+        prototypes[label] = torch.stack(support_embs).mean(dim=0)  # shape: (hidden_size)
 
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    with open(output_path, "w") as f:
-        json.dump(outputs, f, indent=2)
-    print(f"Detailed results saved to {output_path}")
+    for ex in test_examples:
+        query = embed_code(ex["code1"] + "\n" + ex["code2"])  # (1, hidden_size)
+        sims = {l: F.cosine_similarity(query, prototypes[l], dim=0).item() for l in [0, 1]}
+        pred = 1 if sims[1] > sims[0] else 0
+        preds.append(pred)
+        targets.append(ex["label"])
+    report_results(targets, preds, f"{dataset_name}_{shots}shot")
+
+# Print + save metrics 
+def report_results(y_true, y_pred, tag):
+    print(f"\nEvaluation: {tag}")
+    print(classification_report(y_true, y_pred, target_names=["Non-clone", "Clone"]))
+    print(f"Accuracy: {accuracy_score(y_true, y_pred):.4f}")
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    with open(os.path.join(OUTPUT_DIR, f"{tag}.json"), "w") as f:
+        json.dump({"preds": y_pred, "targets": y_true}, f)
 
 
 # MAIN
 def run():
-    # Load tokenizer & model (classification head attached)
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-    model = AutoModelForSequenceClassification.from_pretrained(
-        MODEL_NAME,
-        num_labels=2,
-    ).to(device)
-
     # Prepare datasets
     train_full = CodeCloneDataset("src/data/combined_train.json", tokenizer, MAX_LENGTH)
     train_size = int(0.8 * len(train_full))
@@ -116,24 +122,27 @@ def run():
         args=training_args,
         train_dataset=train_ds,
         eval_dataset=val_ds,
-        tokenizer=tokenizer,
-        compute_metrics=compute_metrics,
+        tokenizer=tokenizer
     )
 
     # Fine-tune
     trainer.train()
     trainer.save_model(f"{OUTPUT_DIR}/codet5p_cls")
 
-    # Evaluate on each test set
-    for code_set in CLONE_DATASETS:
-        print(f"\n=== Evaluating on {code_set} ===")
-        test_path = f"src/data/rosetta/{code_set}_test.json"
-        test_ds = CodeCloneDataset(test_path, tokenizer, MAX_LENGTH)
-        with open(test_path) as f:
-            raw = json.load(f)
+    support_set = load_multiple_datasets(SUPPORT_PATHS)
+    
+    model.eval()
 
-        out_path = f"{OUTPUT_DIR}/codet5p_cls/{code_set}_eval.json"
-        evaluate_model(model, test_ds, raw, out_path)
+    for code_set in CLONE_DATASETS:
+        test_path = f"src/data/rosetta/{code_set}_test.json"
+        with open(test_path) as f:
+            test_examples = json.load(f)
+
+        print(f"\nDataset: {code_set}")
+        evaluate_zero_shot(test_examples, code_set)
+        evaluate_few_shot(test_examples, support_set, code_set, shots=1)
+        evaluate_few_shot(test_examples, support_set, code_set, shots=2)
+
 
 
 if __name__ == "__main__":
