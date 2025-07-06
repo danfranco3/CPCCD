@@ -63,24 +63,23 @@ def evaluate_zero_shot(test_examples, dataset_name):
         targets.append(ex["label"])
     report_results(targets, preds, f"{dataset_name}_zero_shot")
 
-# Few-shot (1 or 2) using prototype averaging 
 def evaluate_few_shot(test_examples, support_set, dataset_name, shots=1):
     preds, targets = [], []
-    # Create average embedding (prototype) for each class
     prototypes = {}
     for label in [0, 1]:
         support = sample_few_shot_examples(support_set, n=shots, label=label, seed=42)
         support_embs = [embed_code(s["code1"] + "\n" + s["code2"]) for s in support]
-        prototypes[label] = torch.stack(support_embs).mean(dim=0)  # shape: (hidden_size)
+        prototypes[label] = torch.stack(support_embs).mean(dim=0).squeeze(0)
 
     for ex in test_examples:
-        query = embed_code(ex["code1"] + "\n" + ex["code2"])  # (1, hidden_size)
+        query = embed_code(ex["code1"] + "\n" + ex["code2"]).squeeze(0)
         sims = {l: F.cosine_similarity(query, prototypes[l], dim=0).item() for l in [0, 1]}
         pred = 1 if sims[1] > sims[0] else 0
         preds.append(pred)
         targets.append(ex["label"])
     report_results(targets, preds, f"{dataset_name}_{shots}shot")
-
+    
+    
 # Print + save metrics 
 def report_results(y_true, y_pred, tag):
     print(f"\nEvaluation: {tag}")
