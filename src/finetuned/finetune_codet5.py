@@ -1,6 +1,7 @@
 import json
 import torch
-from torch.utils.data import DataLoader, random_split
+from torch.utils.data import random_split
+import torch.nn.functional as F
 from transformers import (
     AutoTokenizer,
     AutoModelForSequenceClassification,
@@ -34,9 +35,8 @@ model = AutoModelForSequenceClassification.from_pretrained(
     num_labels=2,
 ).to(DEVICE)
 
-encoder = model.get_encoder()
+encoder = model.base_model.encoder
 
-# Embed code
 def embed_code(code: str) -> torch.Tensor:
     tokens = tokenizer(
         code,
@@ -45,9 +45,11 @@ def embed_code(code: str) -> torch.Tensor:
         max_length=MAX_LENGTH,
         return_tensors="pt"
     ).to(DEVICE)
+    input_ids = tokens["input_ids"]
+    attention_mask = tokens["attention_mask"]
     with torch.no_grad():
-        hidden = encoder(**tokens).last_hidden_state  # (1, seq_len, hidden_size)
-    return hidden[:, 0, :]  # use first token (like [CLS]) → shape: (1, hidden_size)
+        hidden = encoder(input_ids=input_ids, attention_mask=attention_mask).last_hidden_state
+    return hidden[:, 0, :]  # (1, hidden_size)
 
 # Zero-shot evaluation 
 def evaluate_zero_shot(test_examples, dataset_name):
