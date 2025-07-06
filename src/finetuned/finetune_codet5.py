@@ -111,12 +111,27 @@ def report_results(y_true, y_pred, tag):
     return acc
 
 def run():
-    # Prepare datasets
+    # Load raw data
+    with open("src/data/combined_train.json") as f:
+        full_data = json.load(f)
+
+    # Tokenized dataset
     train_full = CodeCloneDataset("src/data/combined_train.json", tokenizer, MAX_LENGTH)
     train_size = int(0.8 * len(train_full))
-    val_size = len(train_full) - train_size
-    train_ds, val_ds = random_split(train_full, [train_size, val_size],
-                                    generator=torch.Generator().manual_seed(42))
+    val_size   = len(train_full) - train_size
+
+    # Split using fixed seed for reproducibility
+    train_ds, val_ds = random_split(
+        train_full,
+        [train_size, val_size],
+        generator=torch.Generator().manual_seed(42)
+    )
+
+    # Get the indices used in val_ds
+    val_indices = val_ds.indices  # <- this is a list of indices used in val_ds
+
+    # Get corresponding raw examples for validation
+    val_examples = [full_data[i] for i in val_indices]
 
     # Training arguments
     training_args = TrainingArguments(
@@ -139,7 +154,6 @@ def run():
         model=model,
         args=training_args,
         train_dataset=train_ds,
-        eval_dataset=val_ds,
         tokenizer=tokenizer
     )
 
@@ -149,8 +163,6 @@ def run():
     model.eval()
     support_set = load_multiple_datasets(SUPPORT_PATHS)
 
-    # Threshold tuning using val_ds
-    val_examples = [val_ds[i] for i in range(len(val_ds))]
     thresholds = [0.7, 0.75, 0.8, 0.85, 0.9]
     best_threshold, best_avg_val_acc = None, -1
 
