@@ -127,7 +127,6 @@ def run():
         per_device_train_batch_size=BATCH_SIZE,
         per_device_eval_batch_size=BATCH_SIZE,
         num_train_epochs=EPOCHS,
-        gradient_accumulation_steps=32,
         weight_decay=0.01,
         logging_dir=f"{OUTPUT_DIR}/logs",
         load_best_model_at_end=True,
