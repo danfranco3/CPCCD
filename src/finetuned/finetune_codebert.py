@@ -10,9 +10,7 @@ from transformers import (
 )
 from sklearn.metrics import classification_report, accuracy_score
 from sklearn.model_selection import train_test_split
-
-from code_clone_pkg.data_utils import load_multiple_datasets
-from code_clone_pkg.dataset import CodeCloneDataset, get_code_embedding
+from code_clone_pkg.dataset import CodeCloneDataset
 
 # CONFIG
 MODEL_NAME   = "microsoft/codebert-base"
@@ -26,21 +24,18 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=2).to(DEVICE)
 
-def report_results(y_true, y_pred, tag):
-    print(f"\nEvaluation: {tag}")
-    print(classification_report(y_true, y_pred, target_names=["Non-clone", "Clone"]))
-    acc = accuracy_score(y_true, y_pred)
-    print(f"Accuracy: {acc:.4f}")
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-    with open(os.path.join(OUTPUT_DIR, f"{tag}.json"), "w") as f:
-        json.dump({"preds": y_pred, "targets": y_true}, f)
-    return acc
-
 def evaluate_zero_shot(test_examples, dataset_name):
     preds, targets = [], []
 
     for ex in test_examples:
-        tokens = get_code_embedding(model, tokenizer, ex["code1"], ex["code2"], model_type="codebert")
+        tokens = tokenizer(
+            ex["code1"],
+            ex["code2"],
+            max_length=MAX_LENGTH,
+            padding="max_length",
+            truncation=True,
+            return_tensors="pt"
+        ).to(DEVICE)
 
         with torch.no_grad():
             outputs = model(**tokens)
@@ -51,6 +46,17 @@ def evaluate_zero_shot(test_examples, dataset_name):
         targets.append(ex["label"])
 
     return report_results(targets, preds, f"{dataset_name}_zero_shot_cls")
+
+
+def report_results(y_true, y_pred, tag):
+    print(f"\nEvaluation: {tag}")
+    print(classification_report(y_true, y_pred, target_names=["Non-clone", "Clone"]))
+    acc = accuracy_score(y_true, y_pred)
+    print(f"Accuracy: {acc:.4f}")
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    with open(os.path.join(OUTPUT_DIR, f"{tag}.json"), "w") as f:
+        json.dump({"preds": y_pred, "targets": y_true}, f)
+    return acc
 
 def run():
     # Load full dataset

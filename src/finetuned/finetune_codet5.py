@@ -1,7 +1,6 @@
 import json
 import torch
-from torch.utils.data import random_split, Subset
-import torch.nn.functional as F
+from torch.utils.data import Subset
 from transformers import (
     AutoTokenizer,
     AutoModelForSequenceClassification,
@@ -11,8 +10,7 @@ from transformers import (
 from sklearn.metrics import classification_report, accuracy_score
 import os
 from sklearn.model_selection import train_test_split
-from code_clone_pkg.data_utils import load_multiple_datasets, sample_few_shot_examples
-from code_clone_pkg.dataset import CodeCloneDataset, get_code_embedding
+from code_clone_pkg.dataset import CodeCloneDataset
 
 SUPPORT_PATHS = ["src/data/codeNet/ruby_go_test.json"]
 
@@ -32,7 +30,15 @@ def evaluate_zero_shot(test_examples, dataset_name):
     preds, targets = [], []
 
     for ex in test_examples:
-        tokens = get_code_embedding(model, tokenizer, ex["code1"], ex["code2"])
+        combined_code = ex["code1"] + " </s> " + ex["code2"]
+
+        tokens = tokenizer(
+            combined_code,
+            max_length=MAX_LENGTH,
+            padding="max_length",
+            truncation=True,
+            return_tensors="pt"
+        ).to(DEVICE)
 
         with torch.no_grad():
             outputs = model(**tokens)
@@ -43,6 +49,7 @@ def evaluate_zero_shot(test_examples, dataset_name):
         targets.append(ex["label"])
 
     return report_results(targets, preds, f"{dataset_name}_zero_shot_cls")
+
 
 def report_results(y_true, y_pred, tag):
     print(f"\nEvaluation: {tag}")
@@ -60,7 +67,7 @@ def run():
         full_data = json.load(f)
 
     # Tokenized full dataset
-    train_full = CodeCloneDataset("src/data/combined_train.json", tokenizer, MAX_LENGTH)
+    train_full = CodeCloneDataset("src/data/combined_train.json", tokenizer, MAX_LENGTH, "codet5")
 
     # Extract labels
     labels = [ex["label"] for ex in full_data]
