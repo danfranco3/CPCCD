@@ -11,6 +11,7 @@ from transformers import (
 from sklearn.metrics import classification_report, accuracy_score
 from sklearn.model_selection import train_test_split
 from code_clone_pkg.dataset import CodeCloneDataset
+from transformers import EarlyStoppingCallback
 
 # CONFIG
 MODEL_NAME   = "microsoft/codebert-base"
@@ -80,7 +81,8 @@ def run():
         output_dir=OUTPUT_DIR,
         eval_strategy="epoch",
         save_strategy="epoch",
-        learning_rate=2e-5,
+        learning_rate=1e-5,
+        warmup_steps=100,
         per_device_train_batch_size=BATCH_SIZE,
         per_device_eval_batch_size=BATCH_SIZE,
         num_train_epochs=EPOCHS,
@@ -97,6 +99,7 @@ def run():
         train_dataset=train_ds,
         eval_dataset=val_ds,
         tokenizer=tokenizer,
+        callbacks=[EarlyStoppingCallback(early_stopping_patience=3)]
     )
 
     trainer.train()

@@ -11,6 +11,8 @@ from sklearn.metrics import classification_report, accuracy_score
 import os
 from sklearn.model_selection import train_test_split
 from code_clone_pkg.dataset import CodeCloneDataset
+from transformers import EarlyStoppingCallback
+
 
 SUPPORT_PATHS = ["src/data/codeNet/ruby_go_test.json"]
 
@@ -84,12 +86,12 @@ def run():
     train_ds = Subset(train_full, train_indices)
     val_ds   = Subset(train_full, val_indices)
 
-    # Training arguments
     training_args = TrainingArguments(
         output_dir=OUTPUT_DIR,
         eval_strategy="epoch",
         save_strategy="epoch",
-        learning_rate=5e-5,
+        learning_rate=1e-5,
+        warmup_steps=100,
         per_device_train_batch_size=BATCH_SIZE,
         per_device_eval_batch_size=BATCH_SIZE,
         num_train_epochs=EPOCHS,
@@ -100,14 +102,15 @@ def run():
         fp16=torch.cuda.is_available(),
     )
 
-    # Trainer
     trainer = Trainer(
         model=model,
         args=training_args,
         train_dataset=train_ds,
         eval_dataset=val_ds,
-        tokenizer=tokenizer
+        tokenizer=tokenizer,
+        callbacks=[EarlyStoppingCallback(early_stopping_patience=3)]
     )
+
 
     trainer.train()
     trainer.save_model(f"{OUTPUT_DIR}/codet5p_cls")

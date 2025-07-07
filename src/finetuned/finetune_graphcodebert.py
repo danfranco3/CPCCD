@@ -11,6 +11,8 @@ from transformers import (
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, accuracy_score
 from code_clone_pkg.dataset import CodeCloneDataset
+from transformers import EarlyStoppingCallback
+
 
 # Configuration
 MODEL_NAME = "microsoft/graphcodebert-base"
@@ -86,12 +88,13 @@ def run():
 
     training_args = TrainingArguments(
         output_dir=OUTPUT_DIR,
-        num_train_epochs=EPOCHS,
-        per_device_train_batch_size=BATCH_SIZE,
-        per_device_eval_batch_size=BATCH_SIZE,
         eval_strategy="epoch",
         save_strategy="epoch",
-        learning_rate=2e-5,
+        learning_rate=1e-5,
+        warmup_steps=100,
+        per_device_train_batch_size=BATCH_SIZE,
+        per_device_eval_batch_size=BATCH_SIZE,
+        num_train_epochs=EPOCHS,
         weight_decay=0.01,
         logging_dir=f"{OUTPUT_DIR}/logs",
         load_best_model_at_end=True,
@@ -105,8 +108,9 @@ def run():
         train_dataset=train_dataset,
         eval_dataset=val_dataset,
         tokenizer=tokenizer,
-        compute_metrics=compute_metrics,
+        callbacks=[EarlyStoppingCallback(early_stopping_patience=3)]
     )
+
 
     trainer.train()
     trainer.save_model(f"{OUTPUT_DIR}/graphcodebert_finetuned")
