@@ -136,11 +136,9 @@ def run():
     # Training arguments
     training_args = TrainingArguments(
         output_dir=OUTPUT_DIR,
-        eval_strategy="epoch",
         save_strategy="epoch",
         learning_rate=5e-5,
         per_device_train_batch_size=BATCH_SIZE,
-        per_device_eval_batch_size=BATCH_SIZE,
         num_train_epochs=EPOCHS,
         weight_decay=0.01,
         logging_dir=f"{OUTPUT_DIR}/logs",
