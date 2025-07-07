@@ -133,6 +133,7 @@ def run():
     # Get corresponding raw examples for validation
     val_examples = [full_data[i] for i in val_indices]
 
+
     # Training arguments
     training_args = TrainingArguments(
         output_dir=OUTPUT_DIR,
@@ -154,7 +155,7 @@ def run():
         model=model,
         args=training_args,
         train_dataset=train_ds,
-        val_ds=val_ds,
+        eval_dataset=val_ds,
         tokenizer=tokenizer
     )
 
