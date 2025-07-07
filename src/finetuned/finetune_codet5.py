@@ -20,7 +20,7 @@ SUPPORT_PATHS = ["src/data/codeNet/ruby_go_test.json"]
 MODEL_NAME   = "Salesforce/codet5p-220m"
 OUTPUT_DIR   = "results/codetp5"
 MAX_LENGTH   = 512
-EPOCHS       = 8
+EPOCHS       = 20
 BATCH_SIZE   = 1
 CLONE_DATASETS = ["python_cobol", "java_fortran", "js_pascal"]
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -37,12 +37,12 @@ def embed_code(code: str) -> torch.Tensor:
         max_length=MAX_LENGTH,
         return_tensors="pt"
     ).to(DEVICE)
+
     with torch.no_grad():
-        hidden = encoder(
-            input_ids=tokens["input_ids"],
-            attention_mask=tokens["attention_mask"]
-        ).last_hidden_state
-    return hidden[:, 0, :]  # (1, hidden_size)
+        outputs = model.base_model(**tokens)
+        hidden = outputs.last_hidden_state
+        emb = hidden[:, 0, :]  # CLS token
+    return emb
 
 
 def evaluate_zero_shot(test_examples, dataset_name, threshold=0.75):
