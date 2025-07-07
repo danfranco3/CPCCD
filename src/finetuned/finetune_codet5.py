@@ -12,7 +12,7 @@ from sklearn.metrics import classification_report, accuracy_score
 import os
 from sklearn.model_selection import train_test_split
 from code_clone_pkg.data_utils import load_multiple_datasets, sample_few_shot_examples
-from code_clone_pkg.dataset import CodeCloneDataset
+from code_clone_pkg.dataset import CodeCloneDataset, get_code_embedding
 
 SUPPORT_PATHS = ["src/data/codeNet/ruby_go_test.json"]
 
@@ -20,37 +20,19 @@ SUPPORT_PATHS = ["src/data/codeNet/ruby_go_test.json"]
 MODEL_NAME   = "Salesforce/codet5p-220m"
 OUTPUT_DIR   = "results/codetp5"
 MAX_LENGTH   = 512
-EPOCHS       = 20
+EPOCHS       = 9
 BATCH_SIZE   = 1
 CLONE_DATASETS = ["python_cobol", "java_fortran", "js_pascal"]
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=2).to(DEVICE)
-encoder = model.base_model.encoder
-
-def embed_code(code1: str, code2:str) -> torch.Tensor:
-    tokens = tokenizer(
-        code1,
-        code2,
-        truncation=True,
-        padding="max_length",
-        max_length=MAX_LENGTH,
-        return_tensors="pt"
-    ).to(DEVICE)
-
-    with torch.no_grad():
-        outputs = model.base_model(**tokens)
-        hidden = outputs.last_hidden_state
-        emb = hidden[:, 0, :]  # CLS token
-    return emb
-
 
 def evaluate_zero_shot(test_examples, dataset_name):
     preds, targets = [], []
 
     for ex in test_examples:
-        tokens = embed_code(ex["code1"], ex["code2"])
+        tokens = get_code_embedding(model, tokenizer, ex["code1"], ex["code2"])
 
         with torch.no_grad():
             outputs = model(**tokens)
