@@ -11,7 +11,6 @@ from transformers import (
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, accuracy_score
 from code_clone_pkg.dataset import CodeCloneDataset
-from transformers import EarlyStoppingCallback
 
 
 # Configuration
@@ -107,8 +106,7 @@ def run():
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=val_dataset,
-        tokenizer=tokenizer,
-        callbacks=[EarlyStoppingCallback(early_stopping_patience=3)]
+        tokenizer=tokenizer
     )
 
 

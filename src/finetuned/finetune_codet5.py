@@ -11,7 +11,6 @@ from sklearn.metrics import classification_report, accuracy_score
 import os
 from sklearn.model_selection import train_test_split
 from code_clone_pkg.dataset import CodeCloneDataset
-from transformers import EarlyStoppingCallback
 
 
 SUPPORT_PATHS = ["src/data/codeNet/ruby_go_test.json"]
@@ -107,8 +106,7 @@ def run():
         args=training_args,
         train_dataset=train_ds,
         eval_dataset=val_ds,
-        tokenizer=tokenizer,
-        callbacks=[EarlyStoppingCallback(early_stopping_patience=3)]
+        tokenizer=tokenizer
     )
 
 
