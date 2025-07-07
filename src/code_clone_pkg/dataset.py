@@ -8,7 +8,8 @@ class CodeCloneDataset(Dataset):
             raw_data = json.load(f)
         self.data = [
             {
-                "input": f"Are the following two code snippets functionally equivalent?\n\nCode1:\n{ex['code1']}\n\nCode2:\n{ex['code2']}\n\nAnswer:",
+                "code1": ex['code1'],
+                "code2": ex["code2"],
                 "output": ex["label"] == 1
             } for ex in raw_data
         ]
@@ -23,7 +24,8 @@ class CodeCloneDataset(Dataset):
         sample = self.data[idx]
 
         enc = self.tokenizer(
-            sample["input"],
+            sample["code1"],
+            sample["code2"],
             max_length=self.max_length,
             truncation=True,
             padding="max_length",
