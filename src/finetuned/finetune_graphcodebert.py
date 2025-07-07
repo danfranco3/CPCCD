@@ -22,7 +22,6 @@ CLONE_DATASETS = ['python_cobol', 'java_fortran', 'js_pascal']
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=2).to(DEVICE)
 
 def compute_metrics(pred):
     labels = pred.label_ids
@@ -32,7 +31,7 @@ def compute_metrics(pred):
         'accuracy': acc,
     }
 
-def evaluate_zero_shot(test_examples, dataset_name):
+def evaluate_zero_shot(model, test_examples, dataset_name):
     preds, targets = [], []
 
     for ex in test_examples:
@@ -69,7 +68,8 @@ def report_results(y_true, y_pred, tag):
 
 def run():
     full_dataset = CodeCloneDataset("src/data/combined_train.json", tokenizer, MAX_LENGTH)
-
+    model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME, num_labels=2).to(DEVICE)
+    
     with open("src/data/combined_train.json") as f:
         raw_data = json.load(f)
     labels = [ex["label"] for ex in raw_data]
@@ -110,6 +110,9 @@ def run():
 
     trainer.train()
     trainer.save_model(f"{OUTPUT_DIR}/graphcodebert_finetuned")
+    
+    best_model = trainer.model
+    best_model.eval()
 
     for dataset_name in CLONE_DATASETS:
         test_path = f"src/data/rosetta/{dataset_name}_test.json"
@@ -117,7 +120,7 @@ def run():
             test_examples = json.load(f)
 
         print(f"\nEvaluating zero-shot on dataset: {dataset_name}")
-        evaluate_zero_shot(test_examples, dataset_name)
+        evaluate_zero_shot(best_model, test_examples, dataset_name)
 
 if __name__ == "__main__":
     run()
