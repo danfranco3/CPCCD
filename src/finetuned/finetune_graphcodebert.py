@@ -16,7 +16,7 @@ from code_clone_pkg.dataset import CodeCloneDataset
 MODEL_NAME = "microsoft/graphcodebert-base"
 OUTPUT_DIR = "results/graphcodebert_finetune"
 MAX_LENGTH = 512
-EPOCHS = 9
+EPOCHS = 15
 BATCH_SIZE = 2
 CLONE_DATASETS = ['python_cobol', 'java_fortran', 'js_pascal']
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
