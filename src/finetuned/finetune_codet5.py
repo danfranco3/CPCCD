@@ -1,6 +1,6 @@
 import json
 import torch
-from torch.utils.data import random_split
+from torch.utils.data import random_split, Subset
 import torch.nn.functional as F
 from transformers import (
     AutoTokenizer,
@@ -10,7 +10,7 @@ from transformers import (
 )
 from sklearn.metrics import classification_report, accuracy_score
 import os
-
+from sklearn.model_selection import train_test_split
 from code_clone_pkg.data_utils import load_multiple_datasets, sample_few_shot_examples
 from code_clone_pkg.dataset import CodeCloneDataset
 
@@ -115,23 +115,27 @@ def run():
     with open("src/data/combined_train.json") as f:
         full_data = json.load(f)
 
-    # Tokenized dataset
+    # Tokenized full dataset
     train_full = CodeCloneDataset("src/data/combined_train.json", tokenizer, MAX_LENGTH)
-    train_size = int(0.8 * len(train_full))
-    val_size   = len(train_full) - train_size
 
-    # Split using fixed seed for reproducibility
-    train_ds, val_ds = random_split(
-        train_full,
-        [train_size, val_size],
-        generator=torch.Generator().manual_seed(42)
+    # Extract labels
+    labels = [ex["label"] for ex in full_data]
+
+    # Create stratified split
+    train_indices, val_indices = train_test_split(
+        list(range(len(full_data))),
+        test_size=0.2,
+        random_state=42,
+        stratify=labels
     )
 
-    # Get the indices used in val_ds
-    val_indices = val_ds.indices  # <- this is a list of indices used in val_ds
+    # Create Subset datasets
+    train_ds = Subset(train_full, train_indices)
+    val_ds   = Subset(train_full, val_indices)
 
-    # Get corresponding raw examples for validation
+    # Also get raw validation examples for threshold tuning
     val_examples = [full_data[i] for i in val_indices]
+
 
 
     # Training arguments
