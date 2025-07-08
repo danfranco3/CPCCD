@@ -29,7 +29,7 @@ def print_pair_stats(pairs):
     print(f"Positive pairs:      {positives}")
     print(f"Negative pairs:      {negatives}")
 
-    for model_name in ["Salesforce/codet5p-220m", "microsoft/codebert-base"]:
+    for model_name in ["Salesforce/codet5p-220m", "microsoft/codebert-base", "microsoft/graphcodebert-base"]:
         tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
         tokenizer = extend_tokenizer_and_resize_model(
             tokenizer,
